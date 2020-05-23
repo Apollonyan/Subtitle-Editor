@@ -124,7 +124,8 @@ struct ContentView: View {
           HStack(spacing: 16) {
             HStack {
               Text(String(format: "%4d", segment.id))
-                .font(.system(Font.TextStyle.title))
+                .font(.system(.title))
+                .fontWeight(.semibold)
                 .foregroundColor(.gray)
               /*
                VStack {
@@ -140,8 +141,11 @@ struct ContentView: View {
               TextField("", text: self.$subtitles.mutableSegments[segment.id - 1].contents[1])
             }
           }
+          .padding(.vertical, 8)
+          .background(self.currentIndex == segment.id - 1 ? Color.yellow.opacity(0.5) : nil)
         }
         .introspectTableView { (tableView) in
+          tableView.separatorStyle = .none
           guard let row = self.currentIndex else { return }
           tableView.scrollToRow(at: IndexPath(row: row, section: 0), at: .middle, animated: true)
         }
