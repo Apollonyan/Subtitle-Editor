@@ -11,9 +11,20 @@ import VideoPlayer
 import AVFoundation
 import srt
 
+extension View {
+  func subtitleInContainer(ofSize size: CGSize) -> some View {
+    self.font(.system(size: size.width / 1139 * 28))
+      .foregroundColor(.white)
+      .padding(.horizontal, 16)
+      .background(Color.black.opacity(0.4))
+      .cornerRadius(4)
+  }
+}
+
 struct ContentView: View {
   @State private var isPlaying: Bool = true
   @State private var currentTime: CMTime = .zero
+  @State private var currentIndex: Int = 0
   @State private var videoURL: URL? = UserDefaults.standard.url(forKey: "VIDEO_URL") {
     didSet {
       UserDefaults.standard.set(videoURL, forKey: "VIDEO_URL")
@@ -25,11 +36,23 @@ struct ContentView: View {
       .flatMap { try? MutableSubtitle.init(url: $0) }
       ?? MutableSubtitle.init(segments: [])
 
+  var subtitleDisplay: some View {
+    GeometryReader { geo in
+      VStack(spacing: 0) {
+        Spacer()
+        Text(self.subtitles.segments[self.currentIndex].contents[0])
+          .subtitleInContainer(ofSize: geo.size)
+        Text(self.subtitles.segments[self.currentIndex].contents[1])
+          .subtitleInContainer(ofSize: geo.size)
+      }
+      .padding(.bottom, 20)
+    }
+    .aspectRatio(CGSize(width: 16, height: 9), contentMode: .fit)
+  }
 
   var videoPlayer: some View {
     VStack {
-      Spacer()
-      if videoURL != nil {
+      ZStack {
         VideoPlayer(url: videoURL!, play: $isPlaying, time: $currentTime)
           .onStateChanged({ (state) in
             switch state {
@@ -40,11 +63,22 @@ struct ContentView: View {
             }
           })
           .aspectRatio(CGSize(width: 16, height: 9), contentMode: .fit)
-        HStack {
-          Text(currentTime.seconds.hms)
-          Slider(value: $currentTime.seconds, in: 0...totalDuration)
-          Text(totalDuration.hms)
-        }
+
+        subtitleDisplay
+      }
+      HStack {
+        Text(currentTime.seconds.hms)
+        Slider(value: $currentTime.seconds, in: 0...totalDuration)
+        Text(totalDuration.hms)
+      }
+    }
+  }
+
+  var videoControlPanel: some View {
+    VStack {
+      Spacer()
+      if videoURL != nil {
+        videoPlayer
       }
       Spacer()
       PickerButton(documentTypes: [kUTTypeMovie], onSelect: {
@@ -64,13 +98,13 @@ struct ContentView: View {
               .font(.system(Font.TextStyle.title))
               .foregroundColor(.gray)
             /*
-            VStack {
-              Text(SRT.Segment.timestamp(from: segment.startTime))
-                .foregroundColor(.gray)
-              Text(SRT.Segment.timestamp(from: segment.endTime))
-                .foregroundColor(.gray)
-            }
-            */
+             VStack {
+             Text(SRT.Segment.timestamp(from: segment.startTime))
+             .foregroundColor(.gray)
+             Text(SRT.Segment.timestamp(from: segment.endTime))
+             .foregroundColor(.gray)
+             }
+             */
           }
           VStack {
             TextField("", text: self.$subtitles.mutableSegments[segment.id - 1].contents[0])
@@ -93,7 +127,7 @@ struct ContentView: View {
   var body: some View {
     GeometryReader { geo in
       HStack {
-        self.videoPlayer
+        self.videoControlPanel
         self.subtitleEditorPanel
           .frame(idealWidth: max(geo.size.width * 0.3, 500), idealHeight: geo.size.height)
           .fixedSize()
