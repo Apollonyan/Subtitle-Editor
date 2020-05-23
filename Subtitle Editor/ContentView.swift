@@ -58,19 +58,29 @@ struct ContentView: View {
         return nextIndex
       }
     }
-    return subtitles.indexOf(currentTimeSec)
+    if let actualIndex = subtitles.indexOf(currentTimeSec) {
+      _currentIndex.intValue = actualIndex
+      return actualIndex
+    } else {
+      return nil
+    }
   }
   private var _currentIndex = IntRef(0)
 
 
   func displaySubtitle(at index: Int) -> some View {
-    GeometryReader { geo in
+    let contents = subtitles.segments[index].contents
+    return GeometryReader { geo in
       VStack(spacing: 0) {
         Spacer()
-        Text(self.subtitles.segments[index].contents[0])
-          .subtitleInContainer(ofSize: geo.size)
-        Text(self.subtitles.segments[index].contents[1])
-          .subtitleInContainer(ofSize: geo.size)
+        if !contents[0].isEmpty {
+          Text(contents[0])
+            .subtitleInContainer(ofSize: geo.size)
+        }
+        if !contents[1].isEmpty {
+          Text(contents[1])
+            .subtitleInContainer(ofSize: geo.size)
+        }
       }
       .padding(.bottom, 20)
     }
@@ -142,7 +152,7 @@ struct ContentView: View {
               TextField("", text: self.$subtitles.mutableSegments[segment.id - 1].contents[1])
             }
           }
-          .padding(.vertical, 8)
+          .padding(8)
           .background(self.currentIndex == segment.id - 1 ? Color.yellow.opacity(0.5) : nil)
         }
         .introspectTableView { (tableView) in

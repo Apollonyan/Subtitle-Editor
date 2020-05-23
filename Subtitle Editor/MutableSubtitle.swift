@@ -29,7 +29,18 @@ extension SubtitleSegment {
 
 extension Subtitle {
   func indexOf(_ timestamp: TimeInterval) -> Int? {
-    #warning("TODO: Implement Binary Search")
+    var lowerBound = 0
+    var upperBound = segments.count
+    while lowerBound < upperBound {
+      let midIndex = lowerBound + (upperBound - lowerBound) / 2
+      if segments[midIndex].contains(timestamp) {
+        return midIndex
+      } else if segments[midIndex].endTime < timestamp {
+        lowerBound = midIndex + 1
+      } else {
+        upperBound = midIndex
+      }
+    }
     return nil
   }
 }
