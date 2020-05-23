@@ -1,0 +1,52 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "GSPlayer",
+        "repositoryURL": "https://github.com/wxxsw/GSPlayer.git",
+        "state": {
+          "branch": null,
+          "revision": "2161cda19435c3a9e0e8be66c98aabe4e39570ea",
+          "version": "0.2.11"
+        }
+      },
+      {
+        "package": "Rainbow",
+        "repositoryURL": "https://github.com/onevcat/Rainbow.git",
+        "state": {
+          "branch": null,
+          "revision": "9c52c1952e9b2305d4507cf473392ac2d7c9b155",
+          "version": "3.1.5"
+        }
+      },
+      {
+        "package": "subtitle",
+        "repositoryURL": "https://github.com/Apollonyan/subtitle",
+        "state": {
+          "branch": "master",
+          "revision": "058ba59c6dbe6ac4a5f5976fbdf2e2c93076757b",
+          "version": null
+        }
+      },
+      {
+        "package": "swift-argument-parser",
+        "repositoryURL": "https://github.com/apple/swift-argument-parser",
+        "state": {
+          "branch": null,
+          "revision": "223d62adc52d51669ae2ee19bdb8b7d9fd6fcd9c",
+          "version": "0.0.6"
+        }
+      },
+      {
+        "package": "VideoPlayer",
+        "repositoryURL": "https://github.com/wxxsw/VideoPlayer.git",
+        "state": {
+          "branch": null,
+          "revision": "eb1e1f25b47a7db5912c156b77b168667070e3f3",
+          "version": "1.1.5"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
