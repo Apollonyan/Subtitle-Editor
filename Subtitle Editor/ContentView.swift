@@ -36,11 +36,11 @@ struct ContentView: View {
     UserDefaults.standard.url(forKey: "SUB_URL")
       .flatMap { try? MutableSubtitle.init(url: $0) }
       ?? MutableSubtitle.init(segments: [])
-
+  
   var currentIndex: Int? {
     let index = _currentIndex.intValue
     let currentTimeSec = currentTime.seconds
-
+    
     quickCheck: if index < subtitles.segments.count {
       if subtitles.segments[index].contains(currentTimeSec) {
         return index
@@ -66,8 +66,8 @@ struct ContentView: View {
     }
   }
   private var _currentIndex = IntRef(0)
-
-
+  
+  
   func displaySubtitle(at index: Int) -> some View {
     let contents = subtitles.segments[index].contents
     return GeometryReader { geo in
@@ -86,7 +86,7 @@ struct ContentView: View {
     }
     .aspectRatio(CGSize(width: 16, height: 9), contentMode: .fit)
   }
-
+  
   var videoPlayer: some View {
     VStack {
       ZStack {
@@ -100,20 +100,20 @@ struct ContentView: View {
             }
           })
           .aspectRatio(CGSize(width: 16, height: 9), contentMode: .fit)
-
+        
         if currentIndex != nil {
           displaySubtitle(at: currentIndex!)
         }
       }
-
+      
       HStack(spacing: 16) {
         Text(currentTime.seconds.hms)
-
+        
         Slider(value: $currentTime.seconds, in: 0...videoDuration)
-
+        
         Text(videoDuration.hms)
       }
-
+      
       HStack(alignment: .lastTextBaseline, spacing: 32) {
         Button(action: {
           self.currentTime.seconds = max(0, self.currentTime.seconds - 15)
@@ -122,14 +122,14 @@ struct ContentView: View {
             .font(.title)
         }
         .disabled(currentTime.seconds < 5)
-
+        
         Button(action: {
           self.isPlaying.toggle()
         }) {
           Image(systemName: isPlaying ? "pause.rectangle.fill" : "play.rectangle.fill")
             .font(.largeTitle)
         }
-
+        
         Button(action: {
           self.currentTime.seconds = min(self.videoDuration, self.currentTime.seconds + 15)
         }) {
@@ -140,7 +140,7 @@ struct ContentView: View {
       }
     }
   }
-
+  
   var videoControlPanel: some View {
     VStack {
       Spacer()
@@ -158,7 +158,7 @@ struct ContentView: View {
       })
     }
   }
-
+  
   var subtitleEditorPanel: some View {
     VStack {
       if !subtitles.mutableSegments.isEmpty {
@@ -195,7 +195,7 @@ struct ContentView: View {
           tableView.scrollToRow(at: IndexPath(row: row, section: 0), at: .middle, animated: true)
         }
       }
-
+      
       PickerButton(documentTypes: [kUTTypeData], onSelect: {
         if let subtitles = try? MutableSubtitle(url: $0) {
           self.subtitles = subtitles
@@ -206,9 +206,9 @@ struct ContentView: View {
       }
     }
   }
-
+  
   @Environment(\.horizontalSizeClass) var horizontalSizeClass
-
+  
   var body: some View {
     Group {
       if horizontalSizeClass == .compact {
@@ -227,6 +227,9 @@ struct ContentView: View {
         }
         .padding()
       }
+    }
+    .onReceive(NotificationCenter.default.publisher(for: .saveFile)) { _ in
+      try? self.subtitles.write(to: UserDefaults.standard.url(forKey: "SUB_URL")!)
     }
   }
 }

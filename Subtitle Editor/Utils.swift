@@ -15,7 +15,7 @@ extension CMTime {
     }
     set {
       self = CMTimeMakeWithSeconds(newValue,
-                                   preferredTimescale: timescale)
+                                   preferredTimescale: CMTimeScale(NSEC_PER_SEC))
     }
   }
 }
@@ -31,7 +31,7 @@ extension TimeInterval {
 
 class IntRef {
   var intValue: Int
-
+  
   init(_ intValue: Int) {
     self.intValue = intValue
   }
