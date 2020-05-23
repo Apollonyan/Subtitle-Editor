@@ -38,6 +38,15 @@
         }
       },
       {
+        "package": "Introspect",
+        "repositoryURL": "https://github.com/siteline/SwiftUI-Introspect.git",
+        "state": {
+          "branch": "master",
+          "revision": "18c8c7fb0f22a3b86b34d68cb3a5f4e7351774e1",
+          "version": null
+        }
+      },
+      {
         "package": "VideoPlayer",
         "repositoryURL": "https://github.com/wxxsw/VideoPlayer.git",
         "state": {

@@ -21,6 +21,19 @@ struct MutableSubtitle {
   }
 }
 
+extension SubtitleSegment {
+  func contains(_ timestamp: TimeInterval) -> Bool {
+    return (startTime...endTime).contains(timestamp)
+  }
+}
+
+extension Subtitle {
+  func indexOf(_ timestamp: TimeInterval) -> Int? {
+    #warning("TODO: Implement Binary Search")
+    return nil
+  }
+}
+
 extension MutableSubtitle: Subtitle {
   var segments: [SubtitleSegment] {
     return mutableSegments

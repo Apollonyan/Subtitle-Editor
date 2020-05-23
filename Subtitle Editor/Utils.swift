@@ -28,3 +28,11 @@ extension TimeInterval {
     return String(format: "%02d:%02d:%02d", h, m, s)
   }
 }
+
+class IntRef {
+  var intValue: Int
+
+  init(_ intValue: Int) {
+    self.intValue = intValue
+  }
+}

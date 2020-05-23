@@ -10,6 +10,7 @@ import SwiftUI
 import VideoPlayer
 import AVFoundation
 import srt
+import Introspect
 
 extension View {
   func subtitleInContainer(ofSize size: CGSize) -> some View {
@@ -24,25 +25,50 @@ extension View {
 struct ContentView: View {
   @State private var isPlaying: Bool = true
   @State private var currentTime: CMTime = .zero
-  @State private var currentIndex: Int = 0
+  @State private var totalDuration: TimeInterval = 0
   @State private var videoURL: URL? = UserDefaults.standard.url(forKey: "VIDEO_URL") {
     didSet {
       UserDefaults.standard.set(videoURL, forKey: "VIDEO_URL")
     }
   }
-  @State private var totalDuration: TimeInterval = 0
   @State private var subtitles: MutableSubtitle =
     UserDefaults.standard.url(forKey: "SUB_URL")
       .flatMap { try? MutableSubtitle.init(url: $0) }
       ?? MutableSubtitle.init(segments: [])
 
-  var subtitleDisplay: some View {
+  var currentIndex: Int? {
+    let index = _currentIndex.intValue
+    let currentTimeSec = currentTime.seconds
+
+    quickCheck: if index < subtitles.segments.count {
+      if subtitles.segments[index].contains(currentTimeSec) {
+        return index
+      }
+      let nextIndex = index + 1
+      if nextIndex == subtitles.segments.count {
+        break quickCheck
+      }
+      if (subtitles.segments[index].endTime...subtitles.segments[nextIndex].startTime)
+        .contains(currentTimeSec) {
+        return nil
+      }
+      if subtitles.segments[nextIndex].contains(currentTimeSec) {
+        _currentIndex.intValue = nextIndex
+        return nextIndex
+      }
+    }
+    return subtitles.indexOf(currentTimeSec)
+  }
+  private var _currentIndex = IntRef(0)
+
+
+  func displaySubtitle(at index: Int) -> some View {
     GeometryReader { geo in
       VStack(spacing: 0) {
         Spacer()
-        Text(self.subtitles.segments[self.currentIndex].contents[0])
+        Text(self.subtitles.segments[index].contents[0])
           .subtitleInContainer(ofSize: geo.size)
-        Text(self.subtitles.segments[self.currentIndex].contents[1])
+        Text(self.subtitles.segments[index].contents[1])
           .subtitleInContainer(ofSize: geo.size)
       }
       .padding(.bottom, 20)
@@ -64,7 +90,9 @@ struct ContentView: View {
           })
           .aspectRatio(CGSize(width: 16, height: 9), contentMode: .fit)
 
-        subtitleDisplay
+        if currentIndex != nil {
+          displaySubtitle(at: currentIndex!)
+        }
       }
       HStack {
         Text(currentTime.seconds.hms)
@@ -91,25 +119,31 @@ struct ContentView: View {
 
   var subtitleEditorPanel: some View {
     VStack {
-      List(subtitles.mutableSegments) { segment in
-        HStack(spacing: 16) {
-          HStack {
-            Text(String(format: "%4d", segment.id))
-              .font(.system(Font.TextStyle.title))
-              .foregroundColor(.gray)
-            /*
-             VStack {
-             Text(SRT.Segment.timestamp(from: segment.startTime))
-             .foregroundColor(.gray)
-             Text(SRT.Segment.timestamp(from: segment.endTime))
-             .foregroundColor(.gray)
-             }
-             */
+      if !subtitles.mutableSegments.isEmpty {
+        List(subtitles.mutableSegments) { segment in
+          HStack(spacing: 16) {
+            HStack {
+              Text(String(format: "%4d", segment.id))
+                .font(.system(Font.TextStyle.title))
+                .foregroundColor(.gray)
+              /*
+               VStack {
+               Text(SRT.Segment.timestamp(from: segment.startTime))
+               .foregroundColor(.gray)
+               Text(SRT.Segment.timestamp(from: segment.endTime))
+               .foregroundColor(.gray)
+               }
+               */
+            }
+            VStack {
+              TextField("", text: self.$subtitles.mutableSegments[segment.id - 1].contents[0])
+              TextField("", text: self.$subtitles.mutableSegments[segment.id - 1].contents[1])
+            }
           }
-          VStack {
-            TextField("", text: self.$subtitles.mutableSegments[segment.id - 1].contents[0])
-            TextField("", text: self.$subtitles.mutableSegments[segment.id - 1].contents[1])
-          }
+        }
+        .introspectTableView { (tableView) in
+          guard let row = self.currentIndex else { return }
+          tableView.scrollToRow(at: IndexPath(row: row, section: 0), at: .middle, animated: true)
         }
       }
 
