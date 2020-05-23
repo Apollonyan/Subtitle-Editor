@@ -26,7 +26,7 @@ extension View {
 struct ContentView: View {
   @State private var isPlaying: Bool = true
   @State private var currentTime: CMTime = .zero
-  @State private var totalDuration: TimeInterval = 0
+  @State private var videoDuration: TimeInterval = 0
   @State private var videoURL: URL? = UserDefaults.standard.url(forKey: "VIDEO_URL") {
     didSet {
       UserDefaults.standard.set(videoURL, forKey: "VIDEO_URL")
@@ -93,8 +93,8 @@ struct ContentView: View {
         VideoPlayer(url: videoURL!, play: $isPlaying, time: $currentTime)
           .onStateChanged({ (state) in
             switch state {
-            case .playing(totalDuration: let totalDuration):
-              self.totalDuration = totalDuration
+            case .playing(totalDuration: let duration):
+              self.videoDuration = duration
             default:
               break
             }
@@ -105,10 +105,38 @@ struct ContentView: View {
           displaySubtitle(at: currentIndex!)
         }
       }
-      HStack {
+
+      HStack(spacing: 16) {
         Text(currentTime.seconds.hms)
-        Slider(value: $currentTime.seconds, in: 0...totalDuration)
-        Text(totalDuration.hms)
+
+        Slider(value: $currentTime.seconds, in: 0...videoDuration)
+
+        Text(videoDuration.hms)
+      }
+
+      HStack(alignment: .lastTextBaseline, spacing: 32) {
+        Button(action: {
+          self.currentTime.seconds = max(0, self.currentTime.seconds - 15)
+        }) {
+          Image(systemName: "gobackward.15")
+            .font(.title)
+        }
+        .disabled(currentTime.seconds < 5)
+
+        Button(action: {
+          self.isPlaying.toggle()
+        }) {
+          Image(systemName: isPlaying ? "pause.rectangle.fill" : "play.rectangle.fill")
+            .font(.largeTitle)
+        }
+
+        Button(action: {
+          self.currentTime.seconds = min(self.videoDuration, self.currentTime.seconds + 15)
+        }) {
+          Image(systemName: "goforward.15")
+            .font(.title)
+        }
+        .disabled(currentTime.seconds + 5 > videoDuration)
       }
     }
   }
@@ -118,6 +146,9 @@ struct ContentView: View {
       Spacer()
       if videoURL != nil {
         videoPlayer
+          .onTapGesture {
+            self.isPlaying.toggle()
+        }
       }
       Spacer()
       PickerButton(documentTypes: [kUTTypeMovie], onSelect: {
@@ -152,6 +183,9 @@ struct ContentView: View {
               TextField("", text: self.$subtitles.mutableSegments[segment.id - 1].contents[1])
             }
           }
+          .onTapGesture {
+            self.currentTime.seconds = segment.startTime
+          }
           .padding(8)
           .background(self.currentIndex == segment.id - 1 ? Color.yellow.opacity(0.5) : nil)
         }
@@ -167,9 +201,9 @@ struct ContentView: View {
           self.subtitles = subtitles
           UserDefaults.standard.set($0, forKey: "SUB_URL")
         }
-      }, label: {
+      }) {
         Text("Choose Subtitle")
-      })
+      }
     }
   }
 
