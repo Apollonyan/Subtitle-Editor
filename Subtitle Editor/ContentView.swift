@@ -11,6 +11,7 @@ import VideoPlayer
 import AVFoundation
 import srt
 import Introspect
+import MobileCoreServices
 
 extension View {
   func subtitleInContainer(ofSize size: CGSize) -> some View {
@@ -162,16 +163,27 @@ struct ContentView: View {
     }
   }
 
+  @Environment(\.horizontalSizeClass) var horizontalSizeClass
+
   var body: some View {
-    GeometryReader { geo in
-      HStack {
-        self.videoControlPanel
-        self.subtitleEditorPanel
-          .frame(idealWidth: max(geo.size.width * 0.3, 500), idealHeight: geo.size.height)
-          .fixedSize()
+    Group {
+      if horizontalSizeClass == .compact {
+        VStack {
+          self.videoControlPanel
+          self.subtitleEditorPanel
+        }
+      } else {
+        GeometryReader { geo in
+          HStack {
+            self.videoControlPanel
+            self.subtitleEditorPanel
+              .frame(idealWidth: max(geo.size.width * 0.3, 500), idealHeight: geo.size.height)
+              .fixedSize()
+          }
+        }
+        .padding()
       }
     }
-    .padding()
   }
 }
 

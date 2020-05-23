@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import MobileCoreServices
 
 struct PickerButton<Label: View>: View {
   public let documentTypes: [CFString]
@@ -32,6 +33,7 @@ struct PickerButton<Label: View>: View {
           onSelect: self.onSelect,
           onCancel: { self.isPresenting = false }
         )
+          .edgesIgnoringSafeArea(.all)
     }
   }
 }
