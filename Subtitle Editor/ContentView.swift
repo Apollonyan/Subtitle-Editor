@@ -36,6 +36,7 @@ struct ContentView: View {
     UserDefaults.standard.url(forKey: "SUB_URL")
       .flatMap { try? MutableSubtitle.init(url: $0) }
       ?? MutableSubtitle.init(segments: [])
+  @State private var jumpTarget: String = ""
   
   var currentIndex: Int? {
     let index = _currentIndex.intValue
@@ -102,6 +103,9 @@ struct ContentView: View {
           displaySubtitle(at: currentIndex!)
         }
       }
+      .onTapGesture {
+          self.isPlaying.toggle()
+      }
       
       HStack(spacing: 16) {
         Text(currentTime.seconds.hms)
@@ -109,6 +113,30 @@ struct ContentView: View {
         Slider(value: $currentTime.seconds, in: 0...videoDuration)
         
         Text(videoDuration.hms)
+      }
+
+      HStack {
+        Text("Jump to: ")
+        TextField("time/segment", text: $jumpTarget) {
+          let segments = self.jumpTarget
+            .components(separatedBy: ":")
+            .compactMap(Double.init)
+          switch segments.count {
+          case 1:
+            let index = Int(segments[0]) - 1
+            if self.subtitles.segments.indices.contains(index) {
+              self.currentTime.seconds
+                = self.subtitles.segments[index].startTime
+            }
+          case 2...:
+            self.currentTime.seconds = segments
+              .reversed().enumerated()
+              .reduce(0) { $0 + pow(60, Double($1.0)) * $1.1 }
+          default:
+            break
+          }
+          self.jumpTarget = ""
+        }
       }
       
       HStack(alignment: .lastTextBaseline, spacing: 32) {
@@ -143,9 +171,6 @@ struct ContentView: View {
       Spacer()
       if videoURL != nil {
         videoPlayer
-          .onTapGesture {
-            self.isPlaying.toggle()
-        }
       }
       Spacer()
       PickerButton(documentTypes: [kUTTypeMovie], onSelect: {
@@ -163,7 +188,7 @@ struct ContentView: View {
           HStack(spacing: 16) {
             HStack {
               Text(String(format: "%4d", segment.id))
-                .font(.system(.title))
+                .font(.system(.title, design: .monospaced))
                 .fontWeight(.semibold)
                 .foregroundColor(.gray)
               /*
