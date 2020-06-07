@@ -100,7 +100,7 @@ class DocumentPickerController: UIDocumentPickerViewController, UIDocumentPicker
        onCancel: (() -> ())? = nil) {
     self.onSelect = onSelect
     self.onCancel = onCancel
-    super.init(documentTypes: allowedUTIs as [String], in: .import)
+    super.init(documentTypes: allowedUTIs as [String], in: .open)
     self.delegate = self
   }
   
