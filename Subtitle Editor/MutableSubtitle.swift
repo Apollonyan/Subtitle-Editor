@@ -12,12 +12,16 @@ import srt
 
 struct MutableSubtitle {
   public var mutableSegments: [Segment]
-
+  
   struct Segment: SubtitleSegment, Identifiable {
     let id: Int
     let startTime: TimeInterval
     let endTime: TimeInterval
-    var contents: [String]
+    var _contents: String
+    
+    var contents: [String] {
+      return _contents.components(separatedBy: .newlines)
+    }
   }
 }
 
@@ -49,11 +53,11 @@ extension MutableSubtitle: Subtitle {
   var segments: [SubtitleSegment] {
     return mutableSegments
   }
-
+  
   init(url: URL) throws {
     self.init(segments: try SRT(url: url).segments)
   }
-
+  
   init(segments: [SubtitleSegment]) {
     self.mutableSegments = segments.enumerated().map { (i, segment) in
       var contents = segment.contents
@@ -62,11 +66,11 @@ extension MutableSubtitle: Subtitle {
         id: i + 1,
         startTime: segment.startTime,
         endTime: segment.endTime,
-        contents: contents
+        _contents: contents.joined(separator: "\n")
       )
     }
   }
-
+  
   func write(to url: URL) throws {
     try SRT(segments: mutableSegments.map { segment in
       let contents = segment.contents

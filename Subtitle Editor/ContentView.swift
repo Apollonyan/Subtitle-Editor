@@ -179,8 +179,7 @@ struct ContentView: View {
                */
             }
             VStack {
-              TextField("", text: self.$subtitles.mutableSegments[segment.id - 1].contents[0])
-              TextField("", text: self.$subtitles.mutableSegments[segment.id - 1].contents[1])
+              TextView(text: self.$subtitles.mutableSegments[segment.id - 1]._contents)
             }
           }
           .onTapGesture {

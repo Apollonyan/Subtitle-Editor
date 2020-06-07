@@ -20,6 +20,7 @@
 		D22398C724791FA400D133D0 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D22398C624791FA400D133D0 /* Utils.swift */; };
 		D22398C92479231500D133D0 /* MutableSubtitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D22398C82479231500D133D0 /* MutableSubtitle.swift */; };
 		D22398CC24794F0000D133D0 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = D22398CB24794F0000D133D0 /* Introspect */; };
+		D27C0665248D070600AB80B9 /* TextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D27C0664248D070600AB80B9 /* TextView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,6 +36,7 @@
 		D22398BE2479053800D133D0 /* DocumentPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentPicker.swift; sourceTree = "<group>"; };
 		D22398C624791FA400D133D0 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		D22398C82479231500D133D0 /* MutableSubtitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutableSubtitle.swift; sourceTree = "<group>"; };
+		D27C0664248D070600AB80B9 /* TextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +79,7 @@
 				D22398A32478FBB900D133D0 /* SceneDelegate.swift */,
 				D22398A52478FBB900D133D0 /* ContentView.swift */,
 				D22398BE2479053800D133D0 /* DocumentPicker.swift */,
+				D27C0664248D070600AB80B9 /* TextView.swift */,
 				D22398C624791FA400D133D0 /* Utils.swift */,
 				D22398C82479231500D133D0 /* MutableSubtitle.swift */,
 				D22398A72478FBBA00D133D0 /* Assets.xcassets */,
@@ -187,6 +190,7 @@
 				D22398C724791FA400D133D0 /* Utils.swift in Sources */,
 				D22398BF2479053800D133D0 /* DocumentPicker.swift in Sources */,
 				D22398C92479231500D133D0 /* MutableSubtitle.swift in Sources */,
+				D27C0665248D070600AB80B9 /* TextView.swift in Sources */,
 				D22398A22478FBB900D133D0 /* AppDelegate.swift in Sources */,
 				D22398A42478FBB900D133D0 /* SceneDelegate.swift in Sources */,
 				D22398A62478FBB900D133D0 /* ContentView.swift in Sources */,
