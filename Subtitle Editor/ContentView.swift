@@ -70,15 +70,12 @@ struct ContentView: View {
   
   func displaySubtitle(at index: Int) -> some View {
     let contents = subtitles.segments[index].contents
+      .filter { !$0.isEmpty }
     return GeometryReader { geo in
       VStack(spacing: 0) {
         Spacer()
-        if !contents[0].isEmpty {
-          Text(contents[0])
-            .subtitleInContainer(ofSize: geo.size)
-        }
-        if !contents[1].isEmpty {
-          Text(contents[1])
+        ForEach(contents, id: \.self) {
+          Text($0)
             .subtitleInContainer(ofSize: geo.size)
         }
       }

@@ -61,7 +61,6 @@ extension MutableSubtitle: Subtitle {
   init(segments: [SubtitleSegment]) {
     self.mutableSegments = segments.enumerated().map { (i, segment) in
       var contents = segment.contents
-      contents += [String](repeating: "", count: 2 - segment.contents.count)
       return Segment(
         id: i + 1,
         startTime: segment.startTime,
