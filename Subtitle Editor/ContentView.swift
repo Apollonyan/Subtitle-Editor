@@ -34,8 +34,8 @@ struct ContentView: View {
   }
   @State private var subtitles: MutableSubtitle =
     UserDefaults.standard.url(forKey: "SUB_URL")
-      .flatMap { try? MutableSubtitle.init(url: $0) }
-      ?? MutableSubtitle.init(segments: [])
+      .flatMap { try? MutableSubtitle(url: $0) }
+      ?? MutableSubtitle(segments: [])
   @State private var jumpTarget: String = ""
   
   var currentIndex: Int? {
