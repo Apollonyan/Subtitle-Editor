@@ -48,7 +48,7 @@ extension Subtitle {
           return midIndex
         }
       } else if segments[midIndex].endTime < timestamp {
-        lowerBound = midIndex
+        lowerBound = midIndex + 1
       } else {
         upperBound = midIndex
       }
