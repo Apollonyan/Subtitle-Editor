@@ -36,20 +36,21 @@ extension Subtitle {
   func indexOf(_ timestamp: TimeInterval) -> Int? {
     var lowerBound = 0
     var upperBound = segments.count
+    guard upperBound > 0 else { return nil }
     while lowerBound < upperBound {
       let midIndex = lowerBound + (upperBound - lowerBound) / 2
       if segments[midIndex].contains(timestamp) {
         let nextIndex = midIndex + 1
-        if nextIndex != segments.endIndex,
-          segments[nextIndex].contains(timestamp) {
+        if segments.indices.contains(nextIndex),
+          abs(segments[nextIndex].startTime - timestamp) < 0.001 {
           return nextIndex
         } else {
           return midIndex
         }
       } else if segments[midIndex].endTime < timestamp {
-        lowerBound = midIndex + 1
+        lowerBound = midIndex
       } else {
-        upperBound = midIndex - 1
+        upperBound = midIndex
       }
     }
     return nil

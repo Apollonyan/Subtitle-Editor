@@ -42,14 +42,20 @@ struct ContentView: View {
   var currentIndex: Int? {
     let index = _currentIndex.intValue
     let currentTimeSec = currentTime.seconds
-    
     quickCheck: if index < subtitles.segments.count {
-      if subtitles.segments[index].contains(currentTimeSec) {
-        return index
-      }
       let nextIndex = index + 1
       if nextIndex == subtitles.segments.count {
+        if subtitles.segments[index].contains(currentTimeSec) {
+          return index
+        }
         break quickCheck
+      }
+      if abs(currentTimeSec - subtitles.segments[nextIndex].startTime) < 0.001 {
+        _currentIndex.intValue = nextIndex
+        return nextIndex
+      }
+      if subtitles.segments[index].contains(currentTimeSec) {
+        return index
       }
       if (subtitles.segments[index].endTime...subtitles.segments[nextIndex].startTime)
         .contains(currentTimeSec) {
