@@ -18,7 +18,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   
   override func buildMenu(with builder: UIMenuBuilder) {
     super.buildMenu(with: builder)
-    print("hi")
     let save = UIMenu(
       title: "Save", identifier: .init(rawValue: "Save"),
       options: .displayInline,
@@ -45,7 +44,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
     // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
   }
-  
+
   func applicationWillTerminate(_ application: UIApplication) {
     postSave()
   }

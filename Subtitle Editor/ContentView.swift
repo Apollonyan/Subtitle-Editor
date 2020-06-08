@@ -33,10 +33,7 @@ struct ContentView: View {
       UserDefaults.standard.set(videoURL, forKey: "VIDEO_URL")
     }
   }
-  @State private var subtitles: MutableSubtitle
-    = UserDefaults.standard.withSecurityScopedURL(forKey: "SUB_URL_BOOKMARK") {
-      $0.flatMap { try? MutableSubtitle(url: $0) }
-    } ?? MutableSubtitle(segments: [])
+  @State private var subtitles = MutableSubtitle(segments: [])
   @State private var jumpTarget: String = ""
   
   var currentIndex: Int? {
@@ -74,7 +71,19 @@ struct ContentView: View {
     }
   }
   private var _currentIndex = IntRef(0)
-  
+  private let monitor = Monitor("SUB_URL_BOOKMARK", onChange: {
+    DispatchQueue.main.async {
+      NotificationCenter.default.post(name: .reloadSubtitle, object: nil)
+    }
+  })
+
+  func reloadSubtitle() {
+    UserDefaults.standard.withSecurityScopedURL(forKey: "SUB_URL_BOOKMARK") {
+      if let url = $0, let modified = try? MutableSubtitle(url: url) {
+        subtitles = modified
+      }
+    }
+  }
   
   func displaySubtitle(at index: Int) -> some View {
     let contents = subtitles.segments[index].contents
@@ -247,9 +256,7 @@ struct ContentView: View {
       
       PickerButton(documentTypes: [kUTTypeData], onSelect: {
         $0.withSecurityScope {
-          if let url = $0,
-            let subtitles = try? MutableSubtitle(url: url) {
-            self.subtitles = subtitles
+          if let url = $0 {
             UserDefaults.standard.set(
               try? url.bookmarkData(options: .withSecurityScope),
               forKey: "SUB_URL_BOOKMARK"
@@ -287,6 +294,9 @@ struct ContentView: View {
       UserDefaults.standard.withSecurityScopedURL(forKey: "SUB_URL_BOOKMARK") {
         $0.map { try? self.subtitles.write(to: $0) }
       }
+    }
+    .onReceive(NotificationCenter.default.publisher(for: .reloadSubtitle)) { _ in
+      self.reloadSubtitle()
     }
   }
 }

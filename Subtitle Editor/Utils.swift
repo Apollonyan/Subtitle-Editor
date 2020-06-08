@@ -43,6 +43,7 @@ import Foundation
 
 extension UserDefaults {
   func withSecurityScopedURL<T>(forKey key: String,
+                                autoScope: Bool = true,
                                 then process: (URL?) throws -> T
   ) rethrows -> T {
     var isStale: Bool = false
@@ -53,7 +54,11 @@ extension UserDefaults {
         bookmarkDataIsStale: &isStale),
       !isStale
       else { return try process(nil) }
-    return try url.withSecurityScope(then: process)
+    if autoScope {
+      return try url.withSecurityScope(then: process)
+    } else {
+      return try process(url)
+    }
   }
 }
 
@@ -63,5 +68,67 @@ extension URL {
       else { return try process(nil) }
     defer { stopAccessingSecurityScopedResource() }
     return try process(self)
+  }
+}
+
+extension Notification.Name {
+  static let reloadSubtitle = Notification.Name("Reload Please")
+}
+
+import Combine
+
+class Monitor {
+  public let key: String
+  public let onChange: () -> Void
+  private var descriptor: Int32 = -1
+  private var observer: DispatchSourceFileSystemObject? = nil
+  private var cancellable: NSObjectProtocol?
+  
+  public init(_ key: String, onChange: @escaping () -> Void) {
+    self.onChange = onChange
+    self.key = key
+    self.newURL()
+    NotificationCenter.default
+      .addObserver(self, selector: #selector(newURL),
+                   name: UserDefaults.didChangeNotification,
+                   object: nil)
+  }
+  
+  @objc private func newURL() {
+    cancelMonitor()
+    UserDefaults.standard.withSecurityScopedURL(forKey: key, autoScope: false)
+    { [weak self] in
+      guard let url = $0,
+        url.startAccessingSecurityScopedResource()
+        else { return }
+      descriptor = open(url.path, O_EVTONLY)
+      observer = DispatchSource.makeFileSystemObjectSource(
+        fileDescriptor: self!.descriptor,
+        eventMask: .write,
+        queue: .global(qos: .userInteractive)
+      )
+      observer!.setEventHandler(handler: onChange)
+      observer!.setCancelHandler {
+        guard let self = self else { return }
+        if self.descriptor != -1 {
+          close(self.descriptor)
+          self.descriptor = -1
+        }
+      }
+      observer!.activate()
+      onChange()
+    }
+  }
+  
+  private func cancelMonitor() {
+    observer?.cancel()
+  }
+  
+  deinit {
+    cancelMonitor()
+    UserDefaults.standard.withSecurityScopedURL(forKey: key, autoScope: false) {
+      $0?.stopAccessingSecurityScopedResource()
+    }
+    NotificationCenter.default.removeObserver(self)
   }
 }
