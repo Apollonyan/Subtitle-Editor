@@ -54,7 +54,7 @@ struct DocumentPicker: UIViewControllerRepresentable {
   ) -> UIDocumentPickerViewController {
     let controller = UIDocumentPickerViewController(
       documentTypes: documentTypes as [String],
-      in: .import
+      in: .open
     )
     controller.allowsMultipleSelection = false
     controller.delegate = context.coordinator

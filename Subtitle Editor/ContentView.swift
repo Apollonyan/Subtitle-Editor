@@ -28,9 +28,13 @@ struct ContentView: View {
   @State private var isPlaying: Bool = true
   @State private var currentTime: CMTime = .zero
   @State private var videoDuration: TimeInterval = 0
-  @State private var videoURL: URL? = UserDefaults.standard.url(forKey: "VIDEO_URL") {
+  @State private var videoURL: URL? = UserDefaults.standard
+    .withSecurityScopedURL(forKey: "VIDEO_URL_BOOKMARK", autoScope: false, then: {
+      _ = $0?.startAccessingSecurityScopedResource()
+      return $0
+    }) {
     didSet {
-      UserDefaults.standard.set(videoURL, forKey: "VIDEO_URL")
+      oldValue?.stopAccessingSecurityScopedResource()
     }
   }
   @State private var subtitles = MutableSubtitle(segments: [])
@@ -109,6 +113,8 @@ struct ContentView: View {
             switch state {
             case .playing(totalDuration: let duration):
               self.videoDuration = duration
+            case .error(let error):
+              dump(error)
             default:
               break
             }
@@ -190,11 +196,18 @@ struct ContentView: View {
         videoPlayer
       }
       Spacer()
-      PickerButton(documentTypes: [kUTTypeMovie], onSelect: {
-        self.videoURL = $0
-      }, label: {
-        Text("Choose Video")
-      })
+      HStack {
+        Spacer()
+        PickerButton(documentTypes: [kUTTypeMovie], onSelect: {
+          UserDefaults.standard
+            .set(try? $0.bookmarkData(options: .withSecurityScope),
+                 forKey: "VIDEO_URL_BOOKMARK")
+          self.videoURL = $0
+        }, label: {
+          Text("Choose Video")
+        })
+        Spacer()
+      }
     }
   }
   
