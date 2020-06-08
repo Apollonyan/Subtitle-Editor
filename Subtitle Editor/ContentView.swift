@@ -211,9 +211,10 @@ struct ContentView: View {
             VStack {
               TextView(
                 text: self.$subtitles.mutableSegments[segment.id - 1]._contents,
-                textColor: {
-                  $0.components(separatedBy: .newlines)
-                  .reduce(nil) { (previousColor, currentLine) in
+                textColor: { subtitle in
+                  let lines = subtitle.components(separatedBy: .newlines)
+                  let initial: UIColor? = lines.count > 2 ? .systemRed : nil
+                  return lines.reduce(initial) { (previousColor, currentLine) in
                     switch format(currentLine).displayWidth {
                     case ...36:
                       return previousColor

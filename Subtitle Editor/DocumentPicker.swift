@@ -32,8 +32,7 @@ struct PickerButton<Label: View>: View {
           documentTypes: [kUTTypeMovie],
           onSelect: self.onSelect,
           onCancel: { self.isPresenting = false }
-        )
-          .edgesIgnoringSafeArea(.all)
+        ).edgesIgnoringSafeArea(.all)
     }
   }
 }

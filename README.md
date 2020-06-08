@@ -1,2 +1,3 @@
-# Subtitle-Editor
-Subtitle Editor in SwiftUI
+# Subtitle Editor
+
+![icon](./Subtitle%20Editor/Assets.xcassets/AppIcon.appiconset/Icon.png)
