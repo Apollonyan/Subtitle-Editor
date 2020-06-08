@@ -8,6 +8,8 @@
 
 import AVFoundation
 
+let MSEC_PER_SEC = 1000
+
 extension CMTime {
   var seconds: TimeInterval {
     get {
@@ -15,7 +17,7 @@ extension CMTime {
     }
     set {
       self = CMTimeMakeWithSeconds(newValue,
-                                   preferredTimescale: CMTimeScale(NSEC_PER_SEC))
+                                   preferredTimescale: CMTimeScale(MSEC_PER_SEC))
     }
   }
 }

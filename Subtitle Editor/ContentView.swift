@@ -238,7 +238,9 @@ struct ContentView: View {
         .introspectTableView { (tableView) in
           tableView.separatorStyle = .none
           guard let row = self.currentIndex else { return }
-          tableView.scrollToRow(at: IndexPath(row: row, section: 0), at: .middle, animated: true)
+          let target = IndexPath(row: row, section: 0)
+          let animated = tableView.indexPathsForVisibleRows?.contains(target) ?? false
+          tableView.scrollToRow(at: target, at: .middle, animated: animated)
         }
       }
       
