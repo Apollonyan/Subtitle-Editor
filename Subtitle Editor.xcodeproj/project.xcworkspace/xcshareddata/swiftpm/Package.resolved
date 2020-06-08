@@ -11,6 +11,15 @@
         }
       },
       {
+        "package": "Pangu-Swift",
+        "repositoryURL": "https://github.com/Apollonyan/pangu.Swift",
+        "state": {
+          "branch": "master",
+          "revision": "2f9d559b61631350516ca5b38f98cff79f9e81fe",
+          "version": null
+        }
+      },
+      {
         "package": "Rainbow",
         "repositoryURL": "https://github.com/onevcat/Rainbow.git",
         "state": {
@@ -24,7 +33,7 @@
         "repositoryURL": "https://github.com/Apollonyan/subtitle",
         "state": {
           "branch": "master",
-          "revision": "058ba59c6dbe6ac4a5f5976fbdf2e2c93076757b",
+          "revision": "13f636208b6cca0fba1f363deaeb7b6c3efb1391",
           "version": null
         }
       },
@@ -33,8 +42,8 @@
         "repositoryURL": "https://github.com/apple/swift-argument-parser",
         "state": {
           "branch": null,
-          "revision": "223d62adc52d51669ae2ee19bdb8b7d9fd6fcd9c",
-          "version": "0.0.6"
+          "revision": "3d79b2b5a2e5af52c14e462044702ea7728f5770",
+          "version": "0.1.0"
         }
       },
       {
@@ -43,6 +52,15 @@
         "state": {
           "branch": "master",
           "revision": "18c8c7fb0f22a3b86b34d68cb3a5f4e7351774e1",
+          "version": null
+        }
+      },
+      {
+        "package": "tidy-sub",
+        "repositoryURL": "https://github.com/Apollonyan/tidy-sub.git",
+        "state": {
+          "branch": "master",
+          "revision": "8cac83403968c12b781b3fc6981288599084d90c",
           "version": null
         }
       },

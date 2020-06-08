@@ -21,6 +21,7 @@
 		D22398C92479231500D133D0 /* MutableSubtitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D22398C82479231500D133D0 /* MutableSubtitle.swift */; };
 		D22398CC24794F0000D133D0 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = D22398CB24794F0000D133D0 /* Introspect */; };
 		D27C0665248D070600AB80B9 /* TextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D27C0664248D070600AB80B9 /* TextView.swift */; };
+		D27C0668248D1E0200AB80B9 /* tidysub in Frameworks */ = {isa = PBXBuildFile; productRef = D27C0667248D1E0200AB80B9 /* tidysub */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,6 +46,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D22398C524791E7100D133D0 /* subtitle in Frameworks */,
+				D27C0668248D1E0200AB80B9 /* tidysub in Frameworks */,
 				D22398CC24794F0000D133D0 /* Introspect in Frameworks */,
 				D22398BA2478FEE600D133D0 /* srt in Frameworks */,
 				D22398BD2479045300D133D0 /* VideoPlayer in Frameworks */,
@@ -126,6 +128,7 @@
 				D22398BC2479045300D133D0 /* VideoPlayer */,
 				D22398C424791E7100D133D0 /* subtitle */,
 				D22398CB24794F0000D133D0 /* Introspect */,
+				D27C0667248D1E0200AB80B9 /* tidysub */,
 			);
 			productName = "Subtitle Editor";
 			productReference = D223989E2478FBB900D133D0 /* Subtitle Editor.app */;
@@ -159,6 +162,7 @@
 				D22398B82478FEE600D133D0 /* XCRemoteSwiftPackageReference "subtitle" */,
 				D22398BB2479045300D133D0 /* XCRemoteSwiftPackageReference "VideoPlayer" */,
 				D22398CA24794F0000D133D0 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
+				D27C0666248D1E0200AB80B9 /* XCRemoteSwiftPackageReference "tidy-sub" */,
 			);
 			productRefGroup = D223989F2478FBB900D133D0 /* Products */;
 			projectDirPath = "";
@@ -417,6 +421,14 @@
 				kind = branch;
 			};
 		};
+		D27C0666248D1E0200AB80B9 /* XCRemoteSwiftPackageReference "tidy-sub" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Apollonyan/tidy-sub.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -439,6 +451,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D22398CA24794F0000D133D0 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
 			productName = Introspect;
+		};
+		D27C0667248D1E0200AB80B9 /* tidysub */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D27C0666248D1E0200AB80B9 /* XCRemoteSwiftPackageReference "tidy-sub" */;
+			productName = tidysub;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -10,18 +10,23 @@ import SwiftUI
 
 struct TextView: UIViewRepresentable {
   @Binding var text: String
-  
+  @State var textColor: (String) -> UIColor?
+
   func makeUIView(context: Context) -> UITextView {
-    let view = UITextView()
-    view.delegate = context.coordinator
-    view.isScrollEnabled = false
-    view.font = UIFont.preferredFont(forTextStyle: .body)
-    return view
+    let uiView = UITextView()
+    uiView.delegate = context.coordinator
+    uiView.isScrollEnabled = false
+    uiView.font = UIFont.preferredFont(forTextStyle: .body)
+    return uiView
   }
   
   func updateUIView(_ uiView: UITextView, context: Context) {
     if uiView.text != text {
       uiView.text = text
+    }
+    let newColor = textColor(text) ?? UIColor.label
+    if uiView.textColor != newColor {
+      uiView.textColor = newColor
     }
   }
   
@@ -45,6 +50,6 @@ struct TextView: UIViewRepresentable {
 
 struct TextView_Previews: PreviewProvider {
   static var previews: some View {
-    TextView(text: .constant("Hello"))
+    TextView(text: .constant("Hello"), textColor: { _ in nil })
   }
 }

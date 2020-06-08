@@ -9,6 +9,7 @@
 import Foundation
 import subtitle
 import srt
+import tidysub
 
 struct MutableSubtitle {
   public var mutableSegments: [Segment]
@@ -38,11 +39,17 @@ extension Subtitle {
     while lowerBound < upperBound {
       let midIndex = lowerBound + (upperBound - lowerBound) / 2
       if segments[midIndex].contains(timestamp) {
-        return midIndex
+        let nextIndex = midIndex + 1
+        if nextIndex != segments.endIndex,
+          segments[nextIndex].contains(timestamp) {
+          return nextIndex
+        } else {
+          return midIndex
+        }
       } else if segments[midIndex].endTime < timestamp {
         lowerBound = midIndex + 1
       } else {
-        upperBound = midIndex
+        upperBound = midIndex - 1
       }
     }
     return nil
@@ -72,7 +79,7 @@ extension MutableSubtitle: Subtitle {
   func write(to url: URL) throws {
     try SRT(segments: mutableSegments.map { segment in
       let contents = segment.contents
-        .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+        .map(format)
         .filter { !$0.isEmpty }
       precondition(!contents.isEmpty, "Segment \(segment.id) has no content")
       return SRT.Segment(

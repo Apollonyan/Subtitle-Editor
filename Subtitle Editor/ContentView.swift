@@ -7,11 +7,12 @@
 //
 
 import SwiftUI
+import Introspect
 import VideoPlayer
 import AVFoundation
-import srt
-import Introspect
 import MobileCoreServices
+import srt
+import tidysub
 
 extension View {
   func subtitleInContainer(ofSize size: CGSize) -> some View {
@@ -32,10 +33,10 @@ struct ContentView: View {
       UserDefaults.standard.set(videoURL, forKey: "VIDEO_URL")
     }
   }
-  @State private var subtitles: MutableSubtitle =
-    UserDefaults.standard.url(forKey: "SUB_URL")
-      .flatMap { try? MutableSubtitle(url: $0) }
-      ?? MutableSubtitle(segments: [])
+  @State private var subtitles: MutableSubtitle
+    = UserDefaults.standard.withSecurityScopedURL(forKey: "SUB_URL_BOOKMARK") {
+      $0.flatMap { try? MutableSubtitle(url: $0) }
+    } ?? MutableSubtitle(segments: [])
   @State private var jumpTarget: String = ""
   
   var currentIndex: Int? {
@@ -89,22 +90,22 @@ struct ContentView: View {
     VStack {
       ZStack {
         VideoPlayer(url: videoURL!, play: $isPlaying, time: $currentTime)
-          .onStateChanged({ (state) in
+          .onStateChanged { (state) in
             switch state {
             case .playing(totalDuration: let duration):
               self.videoDuration = duration
             default:
               break
             }
-          })
-          .aspectRatio(CGSize(width: 16, height: 9), contentMode: .fit)
+        }
+        .aspectRatio(CGSize(width: 16, height: 9), contentMode: .fit)
         
         if currentIndex != nil {
           displaySubtitle(at: currentIndex!)
         }
       }
       .onTapGesture {
-          self.isPlaying.toggle()
+        self.isPlaying.toggle()
       }
       
       HStack(spacing: 16) {
@@ -129,9 +130,10 @@ struct ContentView: View {
                 = self.subtitles.segments[index].startTime
             }
           case 2...:
-            self.currentTime.seconds = segments
+            let desired = segments
               .reversed().enumerated()
               .reduce(0) { $0 + pow(60, Double($1.0)) * $1.1 }
+            self.currentTime.seconds = min(max(desired, 0), self.videoDuration)
           default:
             break
           }
@@ -201,7 +203,24 @@ struct ContentView: View {
                */
             }
             VStack {
-              TextView(text: self.$subtitles.mutableSegments[segment.id - 1]._contents)
+              TextView(
+                text: self.$subtitles.mutableSegments[segment.id - 1]._contents,
+                textColor: {
+                  $0.components(separatedBy: .newlines)
+                  .reduce(nil) { (previousColor, currentLine) in
+                    switch format(currentLine).displayWidth {
+                    case ...36:
+                      return previousColor
+                    case ..<40 where previousColor < UIColor.systemIndigo:
+                      return UIColor.systemIndigo
+                    case ..<46 where previousColor < UIColor.systemOrange:
+                      return UIColor.systemOrange
+                    default:
+                      return UIColor.systemRed
+                    }
+                  }
+                }
+              )
             }
           }
           .onTapGesture {
@@ -218,9 +237,15 @@ struct ContentView: View {
       }
       
       PickerButton(documentTypes: [kUTTypeData], onSelect: {
-        if let subtitles = try? MutableSubtitle(url: $0) {
-          self.subtitles = subtitles
-          UserDefaults.standard.set($0, forKey: "SUB_URL")
+        $0.withSecurityScope {
+          if let url = $0,
+            let subtitles = try? MutableSubtitle(url: url) {
+            self.subtitles = subtitles
+            UserDefaults.standard.set(
+              try? url.bookmarkData(options: .withSecurityScope),
+              forKey: "SUB_URL_BOOKMARK"
+            )
+          }
         }
       }) {
         Text("Choose Subtitle")
@@ -250,7 +275,39 @@ struct ContentView: View {
       }
     }
     .onReceive(NotificationCenter.default.publisher(for: .saveFile)) { _ in
-      try? self.subtitles.write(to: UserDefaults.standard.url(forKey: "SUB_URL")!)
+      UserDefaults.standard.withSecurityScopedURL(forKey: "SUB_URL_BOOKMARK") {
+        $0.map { try? self.subtitles.write(to: $0) }
+      }
+    }
+  }
+}
+
+extension UIColor: Comparable {
+  public static func < (lhs: UIColor, rhs: UIColor) -> Bool {
+    switch (lhs, rhs) {
+    case let (x, y) where x == y:
+      return false
+    case (_, .systemRed):
+      return true
+    case (_, .systemOrange):
+      return true
+    case (_, .systemIndigo):
+      return true
+    default:
+      return false
+    }
+  }
+}
+
+extension Optional: Comparable where Wrapped: Comparable {
+  public static func < (lhs: Optional<Wrapped>, rhs: Optional<Wrapped>) -> Bool {
+    switch (lhs, rhs) {
+    case let (.some(lhsWrapped), .some(rhsWrapped)):
+      return lhsWrapped < rhsWrapped
+    case (nil, .some):
+      return true
+    default:
+      return false
     }
   }
 }
