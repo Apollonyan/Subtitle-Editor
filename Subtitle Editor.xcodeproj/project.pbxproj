@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D22236A124958A9300BB5185 /* VideoPlayer in Frameworks */ = {isa = PBXBuildFile; productRef = D22236A024958A9300BB5185 /* VideoPlayer */; };
 		D22398A22478FBB900D133D0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D22398A12478FBB900D133D0 /* AppDelegate.swift */; };
 		D22398A42478FBB900D133D0 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D22398A32478FBB900D133D0 /* SceneDelegate.swift */; };
 		D22398A62478FBB900D133D0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D22398A52478FBB900D133D0 /* ContentView.swift */; };
@@ -14,7 +15,6 @@
 		D22398AB2478FBBA00D133D0 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D22398AA2478FBBA00D133D0 /* Preview Assets.xcassets */; };
 		D22398AE2478FBBA00D133D0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D22398AC2478FBBA00D133D0 /* LaunchScreen.storyboard */; };
 		D22398BA2478FEE600D133D0 /* srt in Frameworks */ = {isa = PBXBuildFile; productRef = D22398B92478FEE600D133D0 /* srt */; };
-		D22398BD2479045300D133D0 /* VideoPlayer in Frameworks */ = {isa = PBXBuildFile; productRef = D22398BC2479045300D133D0 /* VideoPlayer */; };
 		D22398BF2479053800D133D0 /* DocumentPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D22398BE2479053800D133D0 /* DocumentPicker.swift */; };
 		D22398C524791E7100D133D0 /* subtitle in Frameworks */ = {isa = PBXBuildFile; productRef = D22398C424791E7100D133D0 /* subtitle */; };
 		D22398C724791FA400D133D0 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D22398C624791FA400D133D0 /* Utils.swift */; };
@@ -49,7 +49,7 @@
 				D27C0668248D1E0200AB80B9 /* tidysub in Frameworks */,
 				D22398CC24794F0000D133D0 /* Introspect in Frameworks */,
 				D22398BA2478FEE600D133D0 /* srt in Frameworks */,
-				D22398BD2479045300D133D0 /* VideoPlayer in Frameworks */,
+				D22236A124958A9300BB5185 /* VideoPlayer in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -125,10 +125,10 @@
 			name = "Subtitle Editor";
 			packageProductDependencies = (
 				D22398B92478FEE600D133D0 /* srt */,
-				D22398BC2479045300D133D0 /* VideoPlayer */,
 				D22398C424791E7100D133D0 /* subtitle */,
 				D22398CB24794F0000D133D0 /* Introspect */,
 				D27C0667248D1E0200AB80B9 /* tidysub */,
+				D22236A024958A9300BB5185 /* VideoPlayer */,
 			);
 			productName = "Subtitle Editor";
 			productReference = D223989E2478FBB900D133D0 /* Subtitle Editor.app */;
@@ -160,9 +160,9 @@
 			mainGroup = D22398952478FBB900D133D0;
 			packageReferences = (
 				D22398B82478FEE600D133D0 /* XCRemoteSwiftPackageReference "subtitle" */,
-				D22398BB2479045300D133D0 /* XCRemoteSwiftPackageReference "VideoPlayer" */,
 				D22398CA24794F0000D133D0 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
 				D27C0666248D1E0200AB80B9 /* XCRemoteSwiftPackageReference "tidy-sub" */,
+				D222369F24958A9300BB5185 /* XCRemoteSwiftPackageReference "VideoPlayer" */,
 			);
 			productRefGroup = D223989F2478FBB900D133D0 /* Products */;
 			projectDirPath = "";
@@ -397,20 +397,20 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		D222369F24958A9300BB5185 /* XCRemoteSwiftPackageReference "VideoPlayer" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Apollonyan/VideoPlayer.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		D22398B82478FEE600D133D0 /* XCRemoteSwiftPackageReference "subtitle" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Apollonyan/subtitle";
 			requirement = {
 				branch = master;
 				kind = branch;
-			};
-		};
-		D22398BB2479045300D133D0 /* XCRemoteSwiftPackageReference "VideoPlayer" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/wxxsw/VideoPlayer.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.1.5;
 			};
 		};
 		D22398CA24794F0000D133D0 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
@@ -432,15 +432,15 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		D22236A024958A9300BB5185 /* VideoPlayer */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D222369F24958A9300BB5185 /* XCRemoteSwiftPackageReference "VideoPlayer" */;
+			productName = VideoPlayer;
+		};
 		D22398B92478FEE600D133D0 /* srt */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = D22398B82478FEE600D133D0 /* XCRemoteSwiftPackageReference "subtitle" */;
 			productName = srt;
-		};
-		D22398BC2479045300D133D0 /* VideoPlayer */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D22398BB2479045300D133D0 /* XCRemoteSwiftPackageReference "VideoPlayer" */;
-			productName = VideoPlayer;
 		};
 		D22398C424791E7100D133D0 /* subtitle */ = {
 			isa = XCSwiftPackageProductDependency;

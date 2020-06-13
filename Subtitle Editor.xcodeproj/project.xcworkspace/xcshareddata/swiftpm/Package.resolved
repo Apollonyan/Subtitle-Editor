@@ -60,17 +60,17 @@
         "repositoryURL": "https://github.com/Apollonyan/tidy-sub.git",
         "state": {
           "branch": "master",
-          "revision": "8cac83403968c12b781b3fc6981288599084d90c",
+          "revision": "3e4d37be73c4a75225cac9bf10969860d9a64487",
           "version": null
         }
       },
       {
         "package": "VideoPlayer",
-        "repositoryURL": "https://github.com/wxxsw/VideoPlayer.git",
+        "repositoryURL": "https://github.com/Apollonyan/VideoPlayer.git",
         "state": {
-          "branch": null,
-          "revision": "eb1e1f25b47a7db5912c156b77b168667070e3f3",
-          "version": "1.1.5"
+          "branch": "master",
+          "revision": "fb5d012f475e23c580f6aca8e03eebd6e16d2998",
+          "version": null
         }
       }
     ]

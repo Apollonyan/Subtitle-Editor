@@ -27,6 +27,8 @@ extension View {
 struct ContentView: View {
   @State private var isPlaying: Bool = true
   @State private var currentTime: CMTime = .zero
+  @State private var playbackRate: Float = 1
+  let playbackRates = Array(stride(from: 0.5, through: Float(2), by: 0.5))
   @State private var videoDuration: TimeInterval = 0
   @State private var videoURL: URL? = UserDefaults.standard
     .withSecurityScopedURL(forKey: "VIDEO_URL_BOOKMARK", autoScope: false, then: {
@@ -108,7 +110,7 @@ struct ContentView: View {
   var videoPlayer: some View {
     VStack {
       ZStack {
-        VideoPlayer(url: videoURL!, play: $isPlaying, time: $currentTime)
+        VideoPlayer(url: videoURL!, play: $isPlaying, time: $currentTime, rate: $playbackRate)
           .onStateChanged { (state) in
             switch state {
             case .playing(totalDuration: let duration):
@@ -131,6 +133,15 @@ struct ContentView: View {
       
       HStack(spacing: 16) {
         Text(currentTime.seconds.hms)
+        
+        Text("\(playbackRate.hundredths)x")
+            .contextMenu {
+                ForEach(playbackRates, id: \.self) { rate in
+                    Button.init(action: { self.playbackRate = rate }) {
+                        Text("\(rate.hundredths)x")
+                    }
+                }
+        }
         
         Slider(value: $currentTime.seconds, in: 0...videoDuration)
         
@@ -198,11 +209,13 @@ struct ContentView: View {
       Spacer()
       HStack {
         Spacer()
-        PickerButton(documentTypes: [kUTTypeMovie], onSelect: {
+        PickerButton(documentTypes: [kUTTypeMovie], onSelect: { url in
           UserDefaults.standard
-            .set(try? $0.bookmarkData(options: .withSecurityScope),
+            .set(try? url.bookmarkData(options: .withSecurityScope),
                  forKey: "VIDEO_URL_BOOKMARK")
-          self.videoURL = $0
+          DispatchQueue.main.async {
+            self.videoURL = url
+          }
         }, label: {
           Text("Choose Video")
         })

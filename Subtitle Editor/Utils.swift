@@ -132,3 +132,18 @@ class Monitor {
     NotificationCenter.default.removeObserver(self)
   }
 }
+
+extension NumberFormatter {
+    static let hundredths: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.maximumFractionDigits = 2
+        return formatter
+    }()
+}
+
+extension Float {
+    var hundredths: String {
+        return NumberFormatter.hundredths.string(from: self as NSNumber)!
+    }
+}
