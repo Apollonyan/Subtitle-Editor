@@ -7,9 +7,8 @@
 //
 
 import Foundation
-import subtitle
 import srt
-import tidysub
+import func tidysub.format
 
 struct MutableSubtitle {
   public var mutableSegments: [Segment]
@@ -42,7 +41,7 @@ extension Subtitle {
       if segments[midIndex].contains(timestamp) {
         let nextIndex = midIndex + 1
         if segments.indices.contains(nextIndex),
-          abs(segments[nextIndex].startTime - timestamp) < 0.001 {
+           abs(segments[nextIndex].startTime - timestamp) < 0.001 {
           return nextIndex
         } else {
           return midIndex
@@ -58,12 +57,27 @@ extension Subtitle {
 }
 
 extension MutableSubtitle: Subtitle {
+  init(data: Data) throws {
+    self.init(segments: try SRT(data: data).segments)
+  }
+
+  func asData() throws -> Data {
+    try SRT(segments: mutableSegments.map { segment in
+      let contents = segment.contents
+        .map(format)
+        .filter { !$0.isEmpty }
+      precondition(!contents.isEmpty, "Segment \(segment.id) has no content")
+      return SRT.Segment(
+        index: segment.id,
+        from: segment.startTime,
+        to: segment.endTime,
+        contents: contents
+      )
+    }).asData()
+  }
+
   var segments: [SubtitleSegment] {
     return mutableSegments
-  }
-  
-  init(url: URL) throws {
-    self.init(segments: try SRT(url: url).segments)
   }
   
   init(segments: [SubtitleSegment]) {
@@ -76,19 +90,22 @@ extension MutableSubtitle: Subtitle {
       )
     }
   }
-  
-  func write(to url: URL) throws {
-    try SRT(segments: mutableSegments.map { segment in
-      let contents = segment.contents
-        .map(format)
-        .filter { !$0.isEmpty }
-      precondition(!contents.isEmpty, "Segment \(segment.id) has no content")
-      return SRT.Segment(
-        index: segment.id,
-        from: segment.startTime,
-        to: segment.endTime,
-        contents: contents
-      )
-    }).write(to: url)
+}
+
+import protocol SwiftUI.FileDocument
+import UniformTypeIdentifiers
+
+extension MutableSubtitle: FileDocument {
+  static var readableContentTypes: [UTType] = [.data]
+
+  init(fileWrapper: FileWrapper, contentType: UTType) throws {
+    guard let data = fileWrapper.regularFileContents else {
+      throw CocoaError(.fileReadCorruptFile)
+    }
+    try self.init(data: data)
+  }
+
+  func write(to fileWrapper: inout FileWrapper, contentType: UTType) throws {
+    fileWrapper = try FileWrapper(regularFileWithContents: asData())
   }
 }
