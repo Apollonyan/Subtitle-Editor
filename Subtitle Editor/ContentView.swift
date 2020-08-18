@@ -151,7 +151,7 @@ struct ContentView: View {
 
       HStack {
         Text("Jump to: ")
-        TextField("time/segment", text: $jumpTarget) {
+        TextField("time/segment", text: $jumpTarget, onCommit: {
           let segments = jumpTarget
             .components(separatedBy: ":")
             .compactMap(Double.init)
@@ -170,7 +170,7 @@ struct ContentView: View {
             break
           }
           jumpTarget = ""
-        }
+        })
       }
 
       HStack(alignment: .lastTextBaseline, spacing: 32) {
