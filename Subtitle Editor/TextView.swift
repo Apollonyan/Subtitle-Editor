@@ -17,6 +17,7 @@ struct TextView: UIViewRepresentable {
     uiView.delegate = context.coordinator
     uiView.isScrollEnabled = false
     uiView.font = UIFont.preferredFont(forTextStyle: .body)
+    uiView.backgroundColor = .clear
     return uiView
   }
   

@@ -7,41 +7,53 @@
 //
 
 import SwiftUI
-import MobileCoreServices
+import UniformTypeIdentifiers
 
+#if targetEnvironment(macCatalyst)
+private var coordinator: DocumentPicker.Coordinator! = nil
+#endif
 struct PickerButton<Label: View>: View {
-  public let documentTypes: [CFString]
+  public let documentTypes: [UTType]
   public let onSelect: (URL) -> ()
   @State public var label: () -> Label
   @State private var isPresenting: Bool = false
-  
+
   var body: some View {
     Button(action: {
       #if targetEnvironment(macCatalyst)
-      UIApplication.shared.windows[0].rootViewController!.present(DocumentPickerController(
-        documentTypes: self.documentTypes,
+      var top = UIApplication.shared.windows.first { $0.isKeyWindow }?.rootViewController
+      while let presented = top?.presentedViewController { top = presented }
+      coordinator = DocumentPicker.Coordinator(.init(
         onSelect: self.onSelect,
         onCancel: { self.isPresenting = false }
-      ), animated: true)
+      ))
+      top?.present(coordinator.makeForDocumentTypes(documentTypes), animated: true)
       #else
       self.isPresenting = true
       #endif
     }, label: label)
-      .sheet(isPresented: $isPresenting, onDismiss: { self.isPresenting = false }) {
-        DocumentPicker(
-          documentTypes: [kUTTypeMovie],
+    .sheet(isPresented: $isPresenting) {
+      DocumentPicker(
+        documentTypes: documentTypes,
+        delegate: .init(
           onSelect: self.onSelect,
           onCancel: { self.isPresenting = false }
-        ).edgesIgnoringSafeArea(.all)
+        )
+      )
+      .ignoresSafeArea()
     }
   }
 }
 
 struct DocumentPicker: UIViewControllerRepresentable {
-  let documentTypes: [CFString]
-  var onSelect: (URL) -> ()
-  var onCancel: (() -> ())?
-  
+  let documentTypes: [UTType]
+  let delegate: Delegate
+
+  struct Delegate {
+    let onSelect: (URL) -> ()
+    let onCancel: (() -> ())?
+  }
+
   func updateUIViewController(
     _ uiViewController: UIDocumentPickerViewController,
     context: Context
@@ -52,68 +64,43 @@ struct DocumentPicker: UIViewControllerRepresentable {
   func makeUIViewController(
     context: Context
   ) -> UIDocumentPickerViewController {
-    let controller = UIDocumentPickerViewController(
-      documentTypes: documentTypes as [String],
-      in: .open
-    )
-    controller.allowsMultipleSelection = false
-    controller.delegate = context.coordinator
-    return controller
+    return context.coordinator.makeForDocumentTypes(documentTypes)
   }
   
   func makeCoordinator() -> Coordinator {
-    Coordinator(self)
+    return Coordinator(delegate)
   }
-  
+
   class Coordinator: NSObject, UIDocumentPickerDelegate {
-    let parent: DocumentPicker
-    
-    init(_ picker: DocumentPicker) {
-      self.parent = picker
+    func makeForDocumentTypes(_ documentTypes: [UTType]) -> UIDocumentPickerViewController {
+      let controller = UIDocumentPickerViewController(
+        forOpeningContentTypes: documentTypes
+      )
+      controller.allowsMultipleSelection = false
+      controller.delegate = self
+      return controller
     }
-    
-    func documentPicker(_ controller: UIDocumentPickerViewController,
-                        didPickDocumentAt url: URL) {
-      parent.onSelect(url)
+
+    let delegate: Delegate
+
+    init(_ delegate: Delegate) {
+      self.delegate = delegate
     }
-    
+
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+      delegate.onSelect(urls[0])
+    }
+
     func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
-      parent.onCancel?()
+      delegate.onCancel?()
     }
   }
 }
 
 struct DocumentPicker_Previews: PreviewProvider {
   static var previews: some View {
-    DocumentPicker(documentTypes: [kUTTypeMovie], onSelect: { print($0) })
+    DocumentPicker(documentTypes: [.movie],
+                   delegate: DocumentPicker.Delegate(onSelect: { print($0) },
+                                                     onCancel: nil))
   }
 }
-
-#if targetEnvironment(macCatalyst)
-class DocumentPickerController: UIDocumentPickerViewController, UIDocumentPickerDelegate {
-  var onSelect: (URL) -> ()
-  var onCancel: (() -> ())?
-  
-  init(documentTypes allowedUTIs: [CFString],
-       onSelect: @escaping (URL) -> (),
-       onCancel: (() -> ())? = nil) {
-    self.onSelect = onSelect
-    self.onCancel = onCancel
-    super.init(documentTypes: allowedUTIs as [String], in: .open)
-    self.delegate = self
-  }
-  
-  @available(*, unavailable)
-  required init?(coder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
-  }
-  
-  func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-    onSelect(urls[0])
-  }
-  
-  func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
-    onCancel?()
-  }
-}
-#endif

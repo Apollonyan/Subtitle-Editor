@@ -14,9 +14,12 @@ import MobileCoreServices
 import srt
 import tidysub
 
-extension View {
-  func subtitleInContainer(ofSize size: CGSize) -> some View {
-    self.font(.system(size: size.width / 1139 * 28))
+struct SubtitleStyle: ViewModifier {
+  var containerSize: CGSize
+
+  func body(content: Content) -> some View {
+    content
+      .font(.system(size: containerSize.width / 1139 * 28))
       .foregroundColor(.white)
       .padding(.horizontal, 16)
       .background(Color.black.opacity(0.4))
@@ -25,24 +28,27 @@ extension View {
 }
 
 struct ContentView: View {
+  public init(subtitles: Binding<MutableSubtitle>) {
+    _subtitles = subtitles
+  }
+  @Binding public var subtitles: MutableSubtitle
+
   @State private var isPlaying: Bool = true
   @State private var currentTime: CMTime = .zero
   @State private var playbackRate: Float = 1
-  let playbackRates = Array(stride(from: 0.5, through: Float(2), by: 0.5))
   @State private var videoDuration: TimeInterval = 0
   @State private var videoURL: URL? = UserDefaults.standard
-    .withSecurityScopedURL(forKey: "VIDEO_URL_BOOKMARK", autoScope: false, then: {
-      _ = $0?.startAccessingSecurityScopedResource()
-      return $0
-    }) {
+  .withSecurityScopedURL(forKey: "VIDEO_URL_BOOKMARK", autoScope: false, then: {
+    _ = $0?.startAccessingSecurityScopedResource()
+    return $0
+  }) {
     didSet {
       oldValue?.stopAccessingSecurityScopedResource()
     }
   }
-  @State private var subtitles = MutableSubtitle(segments: [])
   @State private var jumpTarget: String = ""
-  
-  var currentIndex: Int? {
+
+  private var currentIndex: Int? {
     let index = _currentIndex.intValue
     let currentTimeSec = currentTime.seconds
     quickCheck: if index < subtitles.segments.count {
@@ -61,7 +67,7 @@ struct ContentView: View {
         return index
       }
       if (subtitles.segments[index].endTime...subtitles.segments[nextIndex].startTime)
-        .contains(currentTimeSec) {
+          .contains(currentTimeSec) {
         return nil
       }
       if subtitles.segments[nextIndex].contains(currentTimeSec) {
@@ -77,120 +83,114 @@ struct ContentView: View {
     }
   }
   private var _currentIndex = IntRef(0)
-  private let monitor = Monitor("SUB_URL_BOOKMARK", onChange: {
-    DispatchQueue.main.async {
-      NotificationCenter.default.post(name: .reloadSubtitle, object: nil)
-    }
-  })
-
-  func reloadSubtitle() {
-    UserDefaults.standard.withSecurityScopedURL(forKey: "SUB_URL_BOOKMARK") {
-      if let url = $0, let modified = try? MutableSubtitle(url: url) {
-        subtitles = modified
-      }
-    }
-  }
   
   func displaySubtitle(at index: Int) -> some View {
     let contents = subtitles.segments[index].contents
       .filter { !$0.isEmpty }
     return GeometryReader { geo in
-      VStack(spacing: 0) {
+      HStack {
         Spacer()
-        ForEach(contents, id: \.self) {
-          Text($0)
-            .subtitleInContainer(ofSize: geo.size)
+        VStack(spacing: 0) {
+          Spacer()
+          ForEach(contents, id: \.self) {
+            Text($0)
+              .modifier(SubtitleStyle(containerSize: geo.size))
+          }
         }
+        Spacer()
       }
       .padding(.bottom, 20)
     }
     .aspectRatio(CGSize(width: 16, height: 9), contentMode: .fit)
   }
-  
+
   var videoPlayer: some View {
-    VStack {
-      ZStack {
-        VideoPlayer(url: videoURL!, play: $isPlaying, time: $currentTime, rate: $playbackRate)
-          .onStateChanged { (state) in
-            switch state {
-            case .playing(totalDuration: let duration):
-              self.videoDuration = duration
-            case .error(let error):
-              dump(error)
-            default:
-              break
-            }
+    ZStack {
+      VideoPlayer(url: videoURL!, play: $isPlaying, time: $currentTime, rate: $playbackRate)
+        .onStateChanged { (state) in
+          switch state {
+          case .playing(totalDuration: let duration):
+            videoDuration = duration
+          case .error(let error):
+            dump(error)
+          default:
+            break
+          }
         }
         .aspectRatio(CGSize(width: 16, height: 9), contentMode: .fit)
-        
-        if currentIndex != nil {
-          displaySubtitle(at: currentIndex!)
-        }
+
+      if currentIndex != nil {
+        displaySubtitle(at: currentIndex!)
       }
-      .onTapGesture {
-        self.isPlaying.toggle()
-      }
-      
+    }
+    .onTapGesture {
+      isPlaying.toggle()
+    }
+  }
+  
+  var videoControlPanel: some View {
+    VStack {
+      videoPlayer
+
       HStack(spacing: 16) {
         Text(currentTime.seconds.hms)
-        
+
         Text("\(playbackRate.hundredths)x")
-            .contextMenu {
-                ForEach(playbackRates, id: \.self) { rate in
-                    Button.init(action: { self.playbackRate = rate }) {
-                        Text("\(rate.hundredths)x")
-                    }
-                }
-        }
-        
+          .contextMenu {
+            ForEach(Array(stride(from: 0.5, through: Float(2), by: 0.5)), id: \.self) { rate in
+              Button(action: { playbackRate = rate }) {
+                Text("\(rate.hundredths)x")
+              }
+            }
+          }
+
         Slider(value: $currentTime.seconds, in: 0...videoDuration)
-        
+
         Text(videoDuration.hms)
       }
 
       HStack {
         Text("Jump to: ")
         TextField("time/segment", text: $jumpTarget) {
-          let segments = self.jumpTarget
+          let segments = jumpTarget
             .components(separatedBy: ":")
             .compactMap(Double.init)
           switch segments.count {
           case 1:
             let index = Int(segments[0]) - 1
-            if self.subtitles.segments.indices.contains(index) {
-              self.currentTime.seconds
-                = self.subtitles.segments[index].startTime
+            if subtitles.segments.indices.contains(index) {
+              currentTime.seconds = subtitles.segments[index].startTime
             }
           case 2...:
             let desired = segments
               .reversed().enumerated()
               .reduce(0) { $0 + pow(60, Double($1.0)) * $1.1 }
-            self.currentTime.seconds = min(max(desired, 0), self.videoDuration)
+            currentTime.seconds = min(max(desired, 0), videoDuration)
           default:
             break
           }
-          self.jumpTarget = ""
+          jumpTarget = ""
         }
       }
-      
+
       HStack(alignment: .lastTextBaseline, spacing: 32) {
         Button(action: {
-          self.currentTime.seconds = max(0, self.currentTime.seconds - 15)
+          currentTime.seconds = max(0, currentTime.seconds - 15)
         }) {
           Image(systemName: "gobackward.15")
             .font(.title)
         }
         .disabled(currentTime.seconds < 5)
-        
+
         Button(action: {
-          self.isPlaying.toggle()
+          isPlaying.toggle()
         }) {
           Image(systemName: isPlaying ? "pause.rectangle.fill" : "play.rectangle.fill")
             .font(.largeTitle)
         }
-        
+
         Button(action: {
-          self.currentTime.seconds = min(self.videoDuration, self.currentTime.seconds + 15)
+          currentTime.seconds = min(videoDuration, currentTime.seconds + 15)
         }) {
           Image(systemName: "goforward.15")
             .font(.title)
@@ -200,129 +200,118 @@ struct ContentView: View {
     }
   }
   
-  var videoControlPanel: some View {
-    VStack {
-      Spacer()
-      if videoURL != nil {
-        videoPlayer
-      }
-      Spacer()
-      HStack {
-        Spacer()
-        PickerButton(documentTypes: [kUTTypeMovie], onSelect: { url in
-          UserDefaults.standard
-            .set(try? url.bookmarkData(options: .withSecurityScope),
-                 forKey: "VIDEO_URL_BOOKMARK")
-          DispatchQueue.main.async {
-            self.videoURL = url
-          }
-        }, label: {
-          Text("Choose Video")
-        })
-        Spacer()
-      }
-    }
-  }
-  
   var subtitleEditorPanel: some View {
-    VStack {
-      if !subtitles.mutableSegments.isEmpty {
-        List(subtitles.mutableSegments) { segment in
-          HStack(spacing: 16) {
-            HStack {
-              Text(String(format: "%4d", segment.id))
-                .font(.system(.title, design: .monospaced))
-                .fontWeight(.semibold)
-                .foregroundColor(.gray)
-              /*
-               VStack {
-               Text(SRT.Segment.timestamp(from: segment.startTime))
-               .foregroundColor(.gray)
-               Text(SRT.Segment.timestamp(from: segment.endTime))
-               .foregroundColor(.gray)
-               }
-               */
-            }
-            VStack {
-              TextView(
-                text: self.$subtitles.mutableSegments[segment.id - 1]._contents,
-                textColor: { subtitle in
-                  let lines = subtitle.components(separatedBy: .newlines)
-                  let initial: UIColor? = lines.count > 2 ? .systemRed : nil
-                  return lines.reduce(initial) { (previousColor, currentLine) in
-                    switch format(currentLine).displayWidth {
-                    case ...36:
-                      return previousColor
-                    case ..<40 where previousColor < UIColor.systemIndigo:
-                      return UIColor.systemIndigo
-                    case ..<46 where previousColor < UIColor.systemOrange:
-                      return UIColor.systemOrange
-                    default:
-                      return UIColor.systemRed
-                    }
-                  }
+    ScrollViewReader { proxy in
+      ScrollView {
+        if !subtitles.mutableSegments.isEmpty {
+          LazyVStack {
+            ForEach(subtitles.mutableSegments) { segment in
+              HStack(spacing: 16) {
+                HStack {
+                  Text(String(format: "%4d", segment.id))
+                    .font(.system(.title, design: .monospaced))
+                    .fontWeight(.semibold)
+                    .foregroundColor(.gray)
+                  /*
+                   VStack {
+                   Text(SRT.Segment.timestamp(from: segment.startTime))
+                   .foregroundColor(.gray)
+                   Text(SRT.Segment.timestamp(from: segment.endTime))
+                   .foregroundColor(.gray)
+                   }
+                   */
                 }
-              )
+                VStack {
+                  TextView(
+                    text: $subtitles.mutableSegments[segment.id - 1]._contents,
+                    textColor: { subtitle in
+                      let lines = subtitle.components(separatedBy: .newlines)
+                      let initial: UIColor? = lines.count > 2 ? .systemRed : nil
+                      return lines.reduce(initial) { (previousColor, currentLine) in
+                        switch format(currentLine).displayWidth {
+                        case ...36:
+                          return previousColor
+                        case ..<40 where previousColor < UIColor.systemIndigo:
+                          return UIColor.systemIndigo
+                        case ..<46 where previousColor < UIColor.systemOrange:
+                          return UIColor.systemOrange
+                        default:
+                          return UIColor.systemRed
+                        }
+                      }
+                    }
+                  )
+                }
+              }
+              .onTapGesture {
+                currentTime.seconds = segment.startTime
+              }
+              .background(currentIndex == segment.id - 1 ? Color.yellow.opacity(0.5) : nil)
             }
           }
-          .onTapGesture {
-            self.currentTime.seconds = segment.startTime
-          }
-          .padding(8)
-          .background(self.currentIndex == segment.id - 1 ? Color.yellow.opacity(0.5) : nil)
-        }
-        .introspectTableView { (tableView) in
-          tableView.separatorStyle = .none
-          guard let row = self.currentIndex else { return }
-          let target = IndexPath(row: row, section: 0)
-          let animated = tableView.indexPathsForVisibleRows?.contains(target) ?? false
-          tableView.scrollToRow(at: target, at: .middle, animated: animated)
-        }
-      }
-      
-      PickerButton(documentTypes: [kUTTypeData], onSelect: {
-        $0.withSecurityScope {
-          if let url = $0 {
-            UserDefaults.standard.set(
-              try? url.bookmarkData(options: .withSecurityScope),
-              forKey: "SUB_URL_BOOKMARK"
-            )
+          .listStyle(PlainListStyle())
+          .onChange(of: currentTime) { [oldIndex = currentIndex ?? 0] _ in
+            guard let index = currentIndex, index != oldIndex else { return }
+            let targetID = subtitles.mutableSegments[index].id
+            if abs(index - oldIndex) < 10 {
+              withAnimation(.easeOut) {
+                proxy.scrollTo(targetID, anchor: .center)
+              }
+            } else {
+              proxy.scrollTo(targetID, anchor: .center)
+            }
           }
         }
-      }) {
-        Text("Choose Subtitle")
       }
     }
   }
-  
-  @Environment(\.horizontalSizeClass) var horizontalSizeClass
-  
+
+  var videoArea: some View {
+    Group {
+      if videoURL != nil {
+        videoControlPanel
+      } else {
+        VStack {
+          Spacer()
+          HStack {
+            Spacer()
+            PickerButton(documentTypes: [.movie], onSelect: { url in
+              UserDefaults.standard
+                .set(try? url.bookmarkData(options: .withSecurityScope),
+                     forKey: "VIDEO_URL_BOOKMARK")
+              DispatchQueue.main.async {
+                videoURL = url
+              }
+            }, label: {
+              Text("Choose Video")
+            })
+            Spacer()
+          }
+          Spacer()
+        }
+      }
+    }
+  }
+
+  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   var body: some View {
     Group {
       if horizontalSizeClass == .compact {
         VStack {
-          self.videoControlPanel
-          self.subtitleEditorPanel
+          videoArea
+          subtitleEditorPanel
         }
       } else {
         GeometryReader { geo in
           HStack {
-            self.videoControlPanel
-            self.subtitleEditorPanel
+            videoArea
+            subtitleEditorPanel
               .frame(idealWidth: max(geo.size.width * 0.3, 500), idealHeight: geo.size.height)
               .fixedSize()
           }
         }
         .padding()
       }
-    }
-    .onReceive(NotificationCenter.default.publisher(for: .saveFile)) { _ in
-      UserDefaults.standard.withSecurityScopedURL(forKey: "SUB_URL_BOOKMARK") {
-        $0.map { try? self.subtitles.write(to: $0) }
-      }
-    }
-    .onReceive(NotificationCenter.default.publisher(for: .reloadSubtitle)) { _ in
-      self.reloadSubtitle()
     }
   }
 }
@@ -359,6 +348,6 @@ extension Optional: Comparable where Wrapped: Comparable {
 
 struct ContentView_Previews: PreviewProvider {
   static var previews: some View {
-    ContentView()
+    ContentView(subtitles: .constant(MutableSubtitle(segments: [])))
   }
 }
