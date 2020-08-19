@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -17,7 +17,6 @@
 		D22398C524791E7100D133D0 /* subtitle in Frameworks */ = {isa = PBXBuildFile; productRef = D22398C424791E7100D133D0 /* subtitle */; };
 		D22398C724791FA400D133D0 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D22398C624791FA400D133D0 /* Utils.swift */; };
 		D22398C92479231500D133D0 /* MutableSubtitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D22398C82479231500D133D0 /* MutableSubtitle.swift */; };
-		D22398CC24794F0000D133D0 /* Introspect in Frameworks */ = {isa = PBXBuildFile; productRef = D22398CB24794F0000D133D0 /* Introspect */; };
 		D2396F9124EC1E4900395994 /* SubtitleEditorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2396F9024EC1E4900395994 /* SubtitleEditorApp.swift */; };
 		D27C0665248D070600AB80B9 /* TextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D27C0664248D070600AB80B9 /* TextView.swift */; };
 		D27C0668248D1E0200AB80B9 /* tidysub in Frameworks */ = {isa = PBXBuildFile; productRef = D27C0667248D1E0200AB80B9 /* tidysub */; };
@@ -45,7 +44,6 @@
 			files = (
 				D22398C524791E7100D133D0 /* subtitle in Frameworks */,
 				D27C0668248D1E0200AB80B9 /* tidysub in Frameworks */,
-				D22398CC24794F0000D133D0 /* Introspect in Frameworks */,
 				D22398BA2478FEE600D133D0 /* srt in Frameworks */,
 				D22236A124958A9300BB5185 /* VideoPlayer in Frameworks */,
 			);
@@ -125,7 +123,6 @@
 			packageProductDependencies = (
 				D22398B92478FEE600D133D0 /* srt */,
 				D22398C424791E7100D133D0 /* subtitle */,
-				D22398CB24794F0000D133D0 /* Introspect */,
 				D27C0667248D1E0200AB80B9 /* tidysub */,
 				D22236A024958A9300BB5185 /* VideoPlayer */,
 			);
@@ -149,7 +146,7 @@
 				};
 			};
 			buildConfigurationList = D22398992478FBB900D133D0 /* Build configuration list for PBXProject "Subtitle Editor" */;
-			compatibilityVersion = "Xcode 9.3";
+			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -159,7 +156,6 @@
 			mainGroup = D22398952478FBB900D133D0;
 			packageReferences = (
 				D22398B82478FEE600D133D0 /* XCRemoteSwiftPackageReference "subtitle" */,
-				D22398CA24794F0000D133D0 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */,
 				D27C0666248D1E0200AB80B9 /* XCRemoteSwiftPackageReference "tidy-sub" */,
 				D222369F24958A9300BB5185 /* XCRemoteSwiftPackageReference "VideoPlayer" */,
 			);
@@ -339,6 +335,7 @@
 				DEVELOPMENT_TEAM = 2H866F22W7;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "Subtitle Editor/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -362,6 +359,7 @@
 				DEVELOPMENT_TEAM = 2H866F22W7;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "Subtitle Editor/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -415,14 +413,6 @@
 				kind = branch;
 			};
 		};
-		D22398CA24794F0000D133D0 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/siteline/SwiftUI-Introspect.git";
-			requirement = {
-				branch = master;
-				kind = branch;
-			};
-		};
 		D27C0666248D1E0200AB80B9 /* XCRemoteSwiftPackageReference "tidy-sub" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Apollonyan/tidy-sub.git";
@@ -448,11 +438,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D22398B82478FEE600D133D0 /* XCRemoteSwiftPackageReference "subtitle" */;
 			productName = subtitle;
-		};
-		D22398CB24794F0000D133D0 /* Introspect */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D22398CA24794F0000D133D0 /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */;
-			productName = Introspect;
 		};
 		D27C0667248D1E0200AB80B9 /* tidysub */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -7,7 +7,6 @@
 //
 
 import SwiftUI
-import AVKit
 
 @main
 struct SubtitleEditorApp: App {
@@ -17,6 +16,7 @@ struct SubtitleEditorApp: App {
     }
   }
 }
+
 //
 //let save = UIMenu(
 //  title: "Save", identifier: .init(rawValue: "Save"),

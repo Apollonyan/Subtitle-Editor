@@ -7,10 +7,8 @@
 //
 
 import SwiftUI
-import Introspect
 import VideoPlayer
 import AVFoundation
-import MobileCoreServices
 import srt
 import tidysub
 
@@ -276,9 +274,11 @@ struct ContentView: View {
           HStack {
             Spacer()
             PickerButton(documentTypes: [.movie], onSelect: { url in
+              #if targetEnvironment(macCatalyst)
               UserDefaults.standard
                 .set(try? url.bookmarkData(options: .withSecurityScope),
                      forKey: "VIDEO_URL_BOOKMARK")
+              #endif
               DispatchQueue.main.async {
                 videoURL = url
               }
