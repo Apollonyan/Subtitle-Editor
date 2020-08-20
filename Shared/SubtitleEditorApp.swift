@@ -17,6 +17,28 @@ struct SubtitleEditorApp: App {
   }
 }
 
+import UniformTypeIdentifiers
+
+extension UTType {
+  static let srt = UTType(filenameExtension: "srt")!
+}
+
+extension MutableSubtitle: FileDocument {
+  static var readableContentTypes: [UTType] = [.srt]
+
+  init(configuration: ReadConfiguration) throws {
+    guard let data = configuration.file.regularFileContents else {
+      throw CocoaError(.fileReadCorruptFile)
+    }
+    try self.init(data: data)
+  }
+
+  func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
+    return try FileWrapper(regularFileWithContents: asData())
+  }
+}
+
+
 //
 //let save = UIMenu(
 //  title: "Save", identifier: .init(rawValue: "Save"),

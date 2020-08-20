@@ -3,98 +3,122 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		D22236A124958A9300BB5185 /* VideoPlayer in Frameworks */ = {isa = PBXBuildFile; productRef = D22236A024958A9300BB5185 /* VideoPlayer */; };
-		D22398A62478FBB900D133D0 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D22398A52478FBB900D133D0 /* ContentView.swift */; };
-		D22398A82478FBBA00D133D0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D22398A72478FBBA00D133D0 /* Assets.xcassets */; };
-		D22398AB2478FBBA00D133D0 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D22398AA2478FBBA00D133D0 /* Preview Assets.xcassets */; };
-		D22398AE2478FBBA00D133D0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D22398AC2478FBBA00D133D0 /* LaunchScreen.storyboard */; };
-		D22398BA2478FEE600D133D0 /* srt in Frameworks */ = {isa = PBXBuildFile; productRef = D22398B92478FEE600D133D0 /* srt */; };
-		D22398BF2479053800D133D0 /* DocumentPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D22398BE2479053800D133D0 /* DocumentPicker.swift */; };
-		D22398C524791E7100D133D0 /* subtitle in Frameworks */ = {isa = PBXBuildFile; productRef = D22398C424791E7100D133D0 /* subtitle */; };
-		D22398C724791FA400D133D0 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D22398C624791FA400D133D0 /* Utils.swift */; };
-		D22398C92479231500D133D0 /* MutableSubtitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D22398C82479231500D133D0 /* MutableSubtitle.swift */; };
-		D2396F9124EC1E4900395994 /* SubtitleEditorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2396F9024EC1E4900395994 /* SubtitleEditorApp.swift */; };
-		D27C0668248D1E0200AB80B9 /* tidysub in Frameworks */ = {isa = PBXBuildFile; productRef = D27C0667248D1E0200AB80B9 /* tidysub */; };
+		D23C9DCC24EE946700F9D3A4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D23C9DB524EE946700F9D3A4 /* Assets.xcassets */; };
+		D23C9DCD24EE946700F9D3A4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D23C9DB524EE946700F9D3A4 /* Assets.xcassets */; };
+		D23C9DDB24EE94BA00F9D3A4 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D23C9DD624EE94BA00F9D3A4 /* Utils.swift */; };
+		D23C9DDC24EE94BA00F9D3A4 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D23C9DD624EE94BA00F9D3A4 /* Utils.swift */; };
+		D23C9DDD24EE94BA00F9D3A4 /* DocumentPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D23C9DD724EE94BA00F9D3A4 /* DocumentPicker.swift */; };
+		D23C9DDF24EE94BA00F9D3A4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D23C9DD824EE94BA00F9D3A4 /* ContentView.swift */; };
+		D23C9DE024EE94BA00F9D3A4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D23C9DD824EE94BA00F9D3A4 /* ContentView.swift */; };
+		D23C9DE124EE94BA00F9D3A4 /* MutableSubtitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D23C9DD924EE94BA00F9D3A4 /* MutableSubtitle.swift */; };
+		D23C9DE224EE94BA00F9D3A4 /* MutableSubtitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D23C9DD924EE94BA00F9D3A4 /* MutableSubtitle.swift */; };
+		D23C9DE324EE94BA00F9D3A4 /* SubtitleEditorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D23C9DDA24EE94BA00F9D3A4 /* SubtitleEditorApp.swift */; };
+		D23C9DE424EE94BA00F9D3A4 /* SubtitleEditorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D23C9DDA24EE94BA00F9D3A4 /* SubtitleEditorApp.swift */; };
+		D23C9DEA24EE952F00F9D3A4 /* srt in Frameworks */ = {isa = PBXBuildFile; productRef = D23C9DE924EE952F00F9D3A4 /* srt */; };
+		D23C9DEC24EE952F00F9D3A4 /* tidysub in Frameworks */ = {isa = PBXBuildFile; productRef = D23C9DEB24EE952F00F9D3A4 /* tidysub */; };
+		D23C9DF024EE953F00F9D3A4 /* srt in Frameworks */ = {isa = PBXBuildFile; productRef = D23C9DEF24EE953F00F9D3A4 /* srt */; };
+		D23C9DF224EE953F00F9D3A4 /* tidysub in Frameworks */ = {isa = PBXBuildFile; productRef = D23C9DF124EE953F00F9D3A4 /* tidysub */; };
+		D23C9DF624EE97B000F9D3A4 /* PickerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D23C9DF524EE97B000F9D3A4 /* PickerButton.swift */; };
+		D23C9DFB24EE9A8100F9D3A4 /* PickerButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D23C9DFA24EE9A8100F9D3A4 /* PickerButton.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		D223989E2478FBB900D133D0 /* Subtitle Editor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Subtitle Editor.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		D22398A52478FBB900D133D0 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		D22398A72478FBBA00D133D0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		D22398AA2478FBBA00D133D0 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		D22398AD2478FBBA00D133D0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		D22398AF2478FBBA00D133D0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D22398B52478FBCE00D133D0 /* Subtitle Editor.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Subtitle Editor.entitlements"; sourceTree = "<group>"; };
-		D22398BE2479053800D133D0 /* DocumentPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentPicker.swift; sourceTree = "<group>"; };
-		D22398C624791FA400D133D0 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
-		D22398C82479231500D133D0 /* MutableSubtitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutableSubtitle.swift; sourceTree = "<group>"; };
-		D2396F9024EC1E4900395994 /* SubtitleEditorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubtitleEditorApp.swift; sourceTree = "<group>"; };
+		D23C9DB524EE946700F9D3A4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D23C9DBA24EE946700F9D3A4 /* Subtitle Editor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Subtitle Editor.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D23C9DBD24EE946700F9D3A4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D23C9DC224EE946700F9D3A4 /* Subtitle Editor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Subtitle Editor.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D23C9DC424EE946700F9D3A4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D23C9DC524EE946700F9D3A4 /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
+		D23C9DD624EE94BA00F9D3A4 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		D23C9DD724EE94BA00F9D3A4 /* DocumentPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DocumentPicker.swift; sourceTree = "<group>"; };
+		D23C9DD824EE94BA00F9D3A4 /* ContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		D23C9DD924EE94BA00F9D3A4 /* MutableSubtitle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MutableSubtitle.swift; sourceTree = "<group>"; };
+		D23C9DDA24EE94BA00F9D3A4 /* SubtitleEditorApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubtitleEditorApp.swift; sourceTree = "<group>"; };
+		D23C9DF524EE97B000F9D3A4 /* PickerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerButton.swift; sourceTree = "<group>"; };
+		D23C9DFA24EE9A8100F9D3A4 /* PickerButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerButton.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		D223989B2478FBB900D133D0 /* Frameworks */ = {
+		D23C9DB724EE946700F9D3A4 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D22398C524791E7100D133D0 /* subtitle in Frameworks */,
-				D27C0668248D1E0200AB80B9 /* tidysub in Frameworks */,
-				D22398BA2478FEE600D133D0 /* srt in Frameworks */,
-				D22236A124958A9300BB5185 /* VideoPlayer in Frameworks */,
+				D23C9DF024EE953F00F9D3A4 /* srt in Frameworks */,
+				D23C9DF224EE953F00F9D3A4 /* tidysub in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D23C9DBF24EE946700F9D3A4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D23C9DEA24EE952F00F9D3A4 /* srt in Frameworks */,
+				D23C9DEC24EE952F00F9D3A4 /* tidysub in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		D22398952478FBB900D133D0 = {
+		D23C9DAC24EE946500F9D3A4 = {
 			isa = PBXGroup;
 			children = (
-				D22398A02478FBB900D133D0 /* Subtitle Editor */,
-				D223989F2478FBB900D133D0 /* Products */,
-				D22398C324791E7100D133D0 /* Frameworks */,
+				D23C9DB124EE946600F9D3A4 /* Shared */,
+				D23C9DBC24EE946700F9D3A4 /* iOS */,
+				D23C9DC324EE946700F9D3A4 /* macOS */,
+				D23C9DBB24EE946700F9D3A4 /* Products */,
+				D23C9DE824EE952F00F9D3A4 /* Frameworks */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
 			tabWidth = 2;
 		};
-		D223989F2478FBB900D133D0 /* Products */ = {
+		D23C9DB124EE946600F9D3A4 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				D223989E2478FBB900D133D0 /* Subtitle Editor.app */,
+				D23C9DDA24EE94BA00F9D3A4 /* SubtitleEditorApp.swift */,
+				D23C9DD824EE94BA00F9D3A4 /* ContentView.swift */,
+				D23C9DD924EE94BA00F9D3A4 /* MutableSubtitle.swift */,
+				D23C9DD624EE94BA00F9D3A4 /* Utils.swift */,
+				D23C9DB524EE946700F9D3A4 /* Assets.xcassets */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		D23C9DBB24EE946700F9D3A4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D23C9DBA24EE946700F9D3A4 /* Subtitle Editor.app */,
+				D23C9DC224EE946700F9D3A4 /* Subtitle Editor.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		D22398A02478FBB900D133D0 /* Subtitle Editor */ = {
+		D23C9DBC24EE946700F9D3A4 /* iOS */ = {
 			isa = PBXGroup;
 			children = (
-				D22398B52478FBCE00D133D0 /* Subtitle Editor.entitlements */,
-				D2396F9024EC1E4900395994 /* SubtitleEditorApp.swift */,
-				D22398A52478FBB900D133D0 /* ContentView.swift */,
-				D22398BE2479053800D133D0 /* DocumentPicker.swift */,
-				D22398C624791FA400D133D0 /* Utils.swift */,
-				D22398C82479231500D133D0 /* MutableSubtitle.swift */,
-				D22398A72478FBBA00D133D0 /* Assets.xcassets */,
-				D22398AC2478FBBA00D133D0 /* LaunchScreen.storyboard */,
-				D22398AF2478FBBA00D133D0 /* Info.plist */,
-				D22398A92478FBBA00D133D0 /* Preview Content */,
+				D23C9DBD24EE946700F9D3A4 /* Info.plist */,
+				D23C9DF524EE97B000F9D3A4 /* PickerButton.swift */,
+				D23C9DD724EE94BA00F9D3A4 /* DocumentPicker.swift */,
 			);
-			path = "Subtitle Editor";
+			path = iOS;
 			sourceTree = "<group>";
 		};
-		D22398A92478FBBA00D133D0 /* Preview Content */ = {
+		D23C9DC324EE946700F9D3A4 /* macOS */ = {
 			isa = PBXGroup;
 			children = (
-				D22398AA2478FBBA00D133D0 /* Preview Assets.xcassets */,
+				D23C9DC424EE946700F9D3A4 /* Info.plist */,
+				D23C9DC524EE946700F9D3A4 /* macOS.entitlements */,
+				D23C9DFA24EE9A8100F9D3A4 /* PickerButton.swift */,
 			);
-			path = "Preview Content";
+			path = macOS;
 			sourceTree = "<group>";
 		};
-		D22398C324791E7100D133D0 /* Frameworks */ = {
+		D23C9DE824EE952F00F9D3A4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 			);
@@ -104,108 +128,139 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		D223989D2478FBB900D133D0 /* Subtitle Editor */ = {
+		D23C9DB924EE946700F9D3A4 /* Subtitle Editor (iOS) */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D22398B22478FBBA00D133D0 /* Build configuration list for PBXNativeTarget "Subtitle Editor" */;
+			buildConfigurationList = D23C9DD024EE946700F9D3A4 /* Build configuration list for PBXNativeTarget "Subtitle Editor (iOS)" */;
 			buildPhases = (
-				D223989A2478FBB900D133D0 /* Sources */,
-				D223989B2478FBB900D133D0 /* Frameworks */,
-				D223989C2478FBB900D133D0 /* Resources */,
+				D23C9DB624EE946700F9D3A4 /* Sources */,
+				D23C9DB724EE946700F9D3A4 /* Frameworks */,
+				D23C9DB824EE946700F9D3A4 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = "Subtitle Editor";
+			name = "Subtitle Editor (iOS)";
 			packageProductDependencies = (
-				D22398B92478FEE600D133D0 /* srt */,
-				D22398C424791E7100D133D0 /* subtitle */,
-				D27C0667248D1E0200AB80B9 /* tidysub */,
-				D22236A024958A9300BB5185 /* VideoPlayer */,
+				D23C9DEF24EE953F00F9D3A4 /* srt */,
+				D23C9DF124EE953F00F9D3A4 /* tidysub */,
 			);
-			productName = "Subtitle Editor";
-			productReference = D223989E2478FBB900D133D0 /* Subtitle Editor.app */;
+			productName = "Subtitle Editor (iOS)";
+			productReference = D23C9DBA24EE946700F9D3A4 /* Subtitle Editor.app */;
+			productType = "com.apple.product-type.application";
+		};
+		D23C9DC124EE946700F9D3A4 /* Subtitle Editor (macOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D23C9DD324EE946700F9D3A4 /* Build configuration list for PBXNativeTarget "Subtitle Editor (macOS)" */;
+			buildPhases = (
+				D23C9DBE24EE946700F9D3A4 /* Sources */,
+				D23C9DBF24EE946700F9D3A4 /* Frameworks */,
+				D23C9DC024EE946700F9D3A4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Subtitle Editor (macOS)";
+			packageProductDependencies = (
+				D23C9DE924EE952F00F9D3A4 /* srt */,
+				D23C9DEB24EE952F00F9D3A4 /* tidysub */,
+			);
+			productName = "Subtitle Editor (macOS)";
+			productReference = D23C9DC224EE946700F9D3A4 /* Subtitle Editor.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		D22398962478FBB900D133D0 /* Project object */ = {
+		D23C9DAD24EE946500F9D3A4 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1150;
+				LastSwiftUpdateCheck = 1200;
 				LastUpgradeCheck = 1200;
-				ORGANIZATIONNAME = Apollonyan;
 				TargetAttributes = {
-					D223989D2478FBB900D133D0 = {
-						CreatedOnToolsVersion = 11.5;
+					D23C9DB924EE946700F9D3A4 = {
+						CreatedOnToolsVersion = 12.0;
+						LastSwiftMigration = 1200;
+					};
+					D23C9DC124EE946700F9D3A4 = {
+						CreatedOnToolsVersion = 12.0;
+						LastSwiftMigration = 1200;
 					};
 				};
 			};
-			buildConfigurationList = D22398992478FBB900D133D0 /* Build configuration list for PBXProject "Subtitle Editor" */;
-			compatibilityVersion = "Xcode 12.0";
+			buildConfigurationList = D23C9DB024EE946500F9D3A4 /* Build configuration list for PBXProject "Subtitle Editor" */;
+			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
 			);
-			mainGroup = D22398952478FBB900D133D0;
+			mainGroup = D23C9DAC24EE946500F9D3A4;
 			packageReferences = (
-				D22398B82478FEE600D133D0 /* XCRemoteSwiftPackageReference "subtitle" */,
-				D27C0666248D1E0200AB80B9 /* XCRemoteSwiftPackageReference "tidy-sub" */,
-				D222369F24958A9300BB5185 /* XCRemoteSwiftPackageReference "VideoPlayer" */,
+				D23C9DE524EE94F600F9D3A4 /* XCRemoteSwiftPackageReference "subtitle" */,
+				D23C9DE624EE950A00F9D3A4 /* XCRemoteSwiftPackageReference "tidy-sub" */,
 			);
-			productRefGroup = D223989F2478FBB900D133D0 /* Products */;
+			productRefGroup = D23C9DBB24EE946700F9D3A4 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				D223989D2478FBB900D133D0 /* Subtitle Editor */,
+				D23C9DB924EE946700F9D3A4 /* Subtitle Editor (iOS) */,
+				D23C9DC124EE946700F9D3A4 /* Subtitle Editor (macOS) */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		D223989C2478FBB900D133D0 /* Resources */ = {
+		D23C9DB824EE946700F9D3A4 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D22398AE2478FBBA00D133D0 /* LaunchScreen.storyboard in Resources */,
-				D22398AB2478FBBA00D133D0 /* Preview Assets.xcassets in Resources */,
-				D22398A82478FBBA00D133D0 /* Assets.xcassets in Resources */,
+				D23C9DCC24EE946700F9D3A4 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D23C9DC024EE946700F9D3A4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D23C9DCD24EE946700F9D3A4 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		D223989A2478FBB900D133D0 /* Sources */ = {
+		D23C9DB624EE946700F9D3A4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D22398C724791FA400D133D0 /* Utils.swift in Sources */,
-				D22398BF2479053800D133D0 /* DocumentPicker.swift in Sources */,
-				D22398C92479231500D133D0 /* MutableSubtitle.swift in Sources */,
-				D2396F9124EC1E4900395994 /* SubtitleEditorApp.swift in Sources */,
-				D22398A62478FBB900D133D0 /* ContentView.swift in Sources */,
+				D23C9DDD24EE94BA00F9D3A4 /* DocumentPicker.swift in Sources */,
+				D23C9DE324EE94BA00F9D3A4 /* SubtitleEditorApp.swift in Sources */,
+				D23C9DDB24EE94BA00F9D3A4 /* Utils.swift in Sources */,
+				D23C9DF624EE97B000F9D3A4 /* PickerButton.swift in Sources */,
+				D23C9DE124EE94BA00F9D3A4 /* MutableSubtitle.swift in Sources */,
+				D23C9DDF24EE94BA00F9D3A4 /* ContentView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D23C9DBE24EE946700F9D3A4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D23C9DE424EE94BA00F9D3A4 /* SubtitleEditorApp.swift in Sources */,
+				D23C9DFB24EE9A8100F9D3A4 /* PickerButton.swift in Sources */,
+				D23C9DDC24EE94BA00F9D3A4 /* Utils.swift in Sources */,
+				D23C9DE224EE94BA00F9D3A4 /* MutableSubtitle.swift in Sources */,
+				D23C9DE024EE94BA00F9D3A4 /* ContentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXVariantGroup section */
-		D22398AC2478FBBA00D133D0 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				D22398AD2478FBBA00D133D0 /* Base */,
-			);
-			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
-
 /* Begin XCBuildConfiguration section */
-		D22398B02478FBBA00D133D0 /* Debug */ = {
+		D23C9DCE24EE946700F9D3A4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -256,17 +311,15 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.5;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
-		D22398B12478FBBA00D133D0 /* Release */ = {
+		D23C9DCF24EE946700F9D3A4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -311,81 +364,132 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.5;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		D23C9DD124EE946700F9D3A4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = iOS/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "io.github.apollonyan.Subtitle-Editor";
+				PRODUCT_NAME = "Subtitle Editor";
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		D23C9DD224EE946700F9D3A4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = iOS/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "io.github.apollonyan.Subtitle-Editor";
+				PRODUCT_NAME = "Subtitle Editor";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
-		D22398B32478FBBA00D133D0 /* Debug */ = {
+		D23C9DD424EE946700F9D3A4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = "Subtitle Editor/Subtitle Editor.entitlements";
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_ASSET_PATHS = "\"Subtitle Editor/Preview Content\"";
-				DEVELOPMENT_TEAM = 2H866F22W7;
+				COMBINE_HIDPI_IMAGES = YES;
 				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = "Subtitle Editor/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.0;
+				INFOPLIST_FILE = macOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
-					"@executable_path/Frameworks",
+					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.github.apollonyan.Subtitle-Editor";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTS_MACCATALYST = YES;
+				PRODUCT_NAME = "Subtitle Editor";
+				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
 		};
-		D22398B42478FBBA00D133D0 /* Release */ = {
+		D23C9DD524EE946700F9D3A4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = "Subtitle Editor/Subtitle Editor.entitlements";
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_ASSET_PATHS = "\"Subtitle Editor/Preview Content\"";
-				DEVELOPMENT_TEAM = 2H866F22W7;
+				COMBINE_HIDPI_IMAGES = YES;
 				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = "Subtitle Editor/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 14.0;
+				INFOPLIST_FILE = macOS/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
-					"@executable_path/Frameworks",
+					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "io.github.apollonyan.Subtitle-Editor";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTS_MACCATALYST = YES;
+				PRODUCT_NAME = "Subtitle Editor";
+				SDKROOT = macosx;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		D22398992478FBB900D133D0 /* Build configuration list for PBXProject "Subtitle Editor" */ = {
+		D23C9DB024EE946500F9D3A4 /* Build configuration list for PBXProject "Subtitle Editor" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				D22398B02478FBBA00D133D0 /* Debug */,
-				D22398B12478FBBA00D133D0 /* Release */,
+				D23C9DCE24EE946700F9D3A4 /* Debug */,
+				D23C9DCF24EE946700F9D3A4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D22398B22478FBBA00D133D0 /* Build configuration list for PBXNativeTarget "Subtitle Editor" */ = {
+		D23C9DD024EE946700F9D3A4 /* Build configuration list for PBXNativeTarget "Subtitle Editor (iOS)" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				D22398B32478FBBA00D133D0 /* Debug */,
-				D22398B42478FBBA00D133D0 /* Release */,
+				D23C9DD124EE946700F9D3A4 /* Debug */,
+				D23C9DD224EE946700F9D3A4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D23C9DD324EE946700F9D3A4 /* Build configuration list for PBXNativeTarget "Subtitle Editor (macOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D23C9DD424EE946700F9D3A4 /* Debug */,
+				D23C9DD524EE946700F9D3A4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -393,15 +497,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		D222369F24958A9300BB5185 /* XCRemoteSwiftPackageReference "VideoPlayer" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Apollonyan/VideoPlayer.git";
-			requirement = {
-				branch = master;
-				kind = branch;
-			};
-		};
-		D22398B82478FEE600D133D0 /* XCRemoteSwiftPackageReference "subtitle" */ = {
+		D23C9DE524EE94F600F9D3A4 /* XCRemoteSwiftPackageReference "subtitle" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Apollonyan/subtitle";
 			requirement = {
@@ -409,7 +505,7 @@
 				kind = branch;
 			};
 		};
-		D27C0666248D1E0200AB80B9 /* XCRemoteSwiftPackageReference "tidy-sub" */ = {
+		D23C9DE624EE950A00F9D3A4 /* XCRemoteSwiftPackageReference "tidy-sub" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Apollonyan/tidy-sub.git";
 			requirement = {
@@ -420,27 +516,27 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		D22236A024958A9300BB5185 /* VideoPlayer */ = {
+		D23C9DE924EE952F00F9D3A4 /* srt */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = D222369F24958A9300BB5185 /* XCRemoteSwiftPackageReference "VideoPlayer" */;
-			productName = VideoPlayer;
-		};
-		D22398B92478FEE600D133D0 /* srt */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D22398B82478FEE600D133D0 /* XCRemoteSwiftPackageReference "subtitle" */;
+			package = D23C9DE524EE94F600F9D3A4 /* XCRemoteSwiftPackageReference "subtitle" */;
 			productName = srt;
 		};
-		D22398C424791E7100D133D0 /* subtitle */ = {
+		D23C9DEB24EE952F00F9D3A4 /* tidysub */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = D22398B82478FEE600D133D0 /* XCRemoteSwiftPackageReference "subtitle" */;
-			productName = subtitle;
+			package = D23C9DE624EE950A00F9D3A4 /* XCRemoteSwiftPackageReference "tidy-sub" */;
+			productName = tidysub;
 		};
-		D27C0667248D1E0200AB80B9 /* tidysub */ = {
+		D23C9DEF24EE953F00F9D3A4 /* srt */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = D27C0666248D1E0200AB80B9 /* XCRemoteSwiftPackageReference "tidy-sub" */;
+			package = D23C9DE524EE94F600F9D3A4 /* XCRemoteSwiftPackageReference "subtitle" */;
+			productName = srt;
+		};
+		D23C9DF124EE953F00F9D3A4 /* tidysub */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D23C9DE624EE950A00F9D3A4 /* XCRemoteSwiftPackageReference "tidy-sub" */;
 			productName = tidysub;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
-	rootObject = D22398962478FBB900D133D0 /* Project object */;
+	rootObject = D23C9DAD24EE946500F9D3A4 /* Project object */;
 }

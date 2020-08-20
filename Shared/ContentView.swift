@@ -7,7 +7,7 @@
 //
 
 import SwiftUI
-import VideoPlayer
+import AVKit
 import AVFoundation
 import srt
 import tidysub
@@ -103,31 +103,26 @@ struct ContentView: View {
   }
 
   var videoPlayer: some View {
-    ZStack {
-      VideoPlayer(url: videoURL!, play: $isPlaying, time: $currentTime, rate: $playbackRate)
-        .onStateChanged { (state) in
-          switch state {
-          case .playing(totalDuration: let duration):
-            videoDuration = duration
-          case .error(let error):
-            dump(error)
-          default:
-            break
-          }
-        }
-        .aspectRatio(CGSize(width: 16, height: 9), contentMode: .fit)
-        .contextMenu {
-          chooseVideoButton
-        }
-
-      if currentIndex != nil {
-        displaySubtitle(at: currentIndex!)
+    /*
+     url: videoURL!,
+     play: $isPlaying,
+     time: $currentTime,
+     rate: $playbackRate
+     videoDuration = duration
+     */
+    VideoPlayer(player: AVPlayer(url: videoURL!)) {
+      if let index = currentIndex {
+        displaySubtitle(at: index)
       }
     }
+    .aspectRatio(CGSize(width: 16, height: 9), contentMode: .fit)
     .onTapGesture {
       withAnimation {
         isPlaying.toggle()
       }
+    }
+    .contextMenu {
+      chooseVideoButton
     }
   }
 
@@ -136,11 +131,11 @@ struct ContentView: View {
     VStack(spacing: 8) {
       videoPlayer
 
-      HStack(spacing: 16) {
+      HStack(spacing: 8) {
         if isPlaying {
           Text(currentTime.seconds.hms)
             .font(.system(.body, design: .monospaced))
-            .matchedGeometryEffect(id: "curTime", in: vcpSpace)
+            .matchedGeometryEffect(id: "curTime", in: vcpSpace, isSource: false)
         } else {
           HStack {
             Image(systemName: "signpost.right.fill")
@@ -167,6 +162,7 @@ struct ContentView: View {
               jumpTarget = currentTime.seconds.hms
             })
             .font(.system(.body, design: .monospaced))
+            .textFieldStyle(PlainTextFieldStyle())
             .fixedSize()
             .accessibilityLabeledPair(role: .content, id: "curTime", in: vcpSpace)
             .onAppear {
@@ -230,9 +226,9 @@ struct ContentView: View {
         if !subtitles.mutableSegments.isEmpty {
           LazyVStack {
             ForEach(subtitles.mutableSegments) { segment in
-              HStack(spacing: 16) {
+              HStack(spacing: 8) {
                 HStack {
-                  Text(String(format: "%4d", segment.id))
+                  Text(String(format: "%-4d", segment.id))
                     .font(.system(.title, design: .monospaced))
                     .fontWeight(.semibold)
                     .foregroundColor(currentIndex == segment.id - 1
@@ -247,7 +243,7 @@ struct ContentView: View {
                    }
                    */
                 }
-                .padding(.leading, 16)
+                .padding(.leading, 8)
                 VStack {
                   TextEditor(text: $subtitles.mutableSegments[segment.id - 1]._contents)
                     .foregroundColor(segment.contents.reduce(segment.contents.count > 2 ? .red : nil) {
@@ -263,6 +259,7 @@ struct ContentView: View {
                         return .red
                       }
                     })
+                    .fixedSize(horizontal: false, vertical: true)
                 }
               }
               .onTapGesture {
@@ -292,7 +289,7 @@ struct ContentView: View {
 
   var chooseVideoButton: some View {
     PickerButton(documentTypes: [.movie]) { url in
-      #if targetEnvironment(macCatalyst)
+      #if os(macOS)
       UserDefaults.standard
         .set(try? url.bookmarkData(options: .withSecurityScope),
              forKey: "VIDEO_URL_BOOKMARK")
@@ -321,47 +318,49 @@ struct ContentView: View {
     }
   }
 
+  #if os(iOS)
   @Environment(\.horizontalSizeClass) private var hSizeClass
   var body: some View {
     GeometryReader { geo in
       if hSizeClass == .compact || geo.size.height > geo.size.width {
-        safeVideoReload(
-          VStack {
-            videoArea
-            subtitleEditorPanel
-          }
-          .padding()
-        )
+        VStack(spacing: 8) {
+          videoArea
+          subtitleEditorPanel
+        }
+        .padding()
       } else {
-        safeVideoReload(
-          HStack(spacing: 16) {
-            videoArea
-            subtitleEditorPanel
-              .frame(idealWidth: max(geo.size.width * 0.3, 500),
-                     idealHeight: geo.size.height)
-              .fixedSize()
-          }
-          .padding()
-        )
+        HStack(spacing: 16) {
+          videoArea
+          subtitleEditorPanel
+            .frame(idealWidth: max(geo.size.width * 0.3, 500),
+                   idealHeight: geo.size.height)
+            .fixedSize()
+        }
+        .padding()
       }
     }
   }
-
-  func safeVideoReload<Content: View>(_ content: Content) -> some View {
-    content
-      .onDisappear {
-        withAnimation {
-          isPlaying = false
+  #else
+  var body: some View {
+    GeometryReader { geo in
+      if geo.size.height > geo.size.width {
+        VSplitView {
+          videoArea
+            .padding()
+          subtitleEditorPanel
+            .padding()
+        }
+      } else {
+        HSplitView {
+          videoArea
+            .padding()
+          subtitleEditorPanel
+            .padding()
         }
       }
-      .onAppear {
-        DispatchQueue.global().asyncAfter(deadline: .now() + 0.5) {
-          withAnimation {
-            isPlaying = true
-          }
-        }
-      }
+    }
   }
+  #endif
 }
 
 extension Color: Comparable {
@@ -399,7 +398,12 @@ struct ContentView_Previews: PreviewProvider {
     ContentView(
       subtitles: .constant(
         MutableSubtitle(mutableSegments: [
-          .init(id: 1, startTime: 0, endTime: 0, _contents: "Hello")
+          .init(id: 1, startTime: 0, endTime: 0, _contents: "Hello"),
+          .init(id: 1234, startTime: 0, endTime: 0, _contents: """
+              Very Long
+              Very good
+              """
+          )
         ])
       )
     )

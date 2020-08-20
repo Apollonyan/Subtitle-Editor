@@ -47,7 +47,7 @@ extension UserDefaults {
                                 autoScope: Bool = true,
                                 then process: (URL?) throws -> T
   ) rethrows -> T {
-    #if targetEnvironment(macCatalyst)
+    #if os(macOS)
     var isStale: Bool = false
     guard
       let data = data(forKey: key),

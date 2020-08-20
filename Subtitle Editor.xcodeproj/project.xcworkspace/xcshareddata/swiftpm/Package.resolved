@@ -2,15 +2,6 @@
   "object": {
     "pins": [
       {
-        "package": "GSPlayer",
-        "repositoryURL": "https://github.com/wxxsw/GSPlayer.git",
-        "state": {
-          "branch": null,
-          "revision": "95c57e6a9aa0aa39ff3c52d0376ddf94e400c574",
-          "version": "0.2.16"
-        }
-      },
-      {
         "package": "Pangu-Swift",
         "repositoryURL": "https://github.com/Apollonyan/pangu.Swift",
         "state": {
@@ -52,15 +43,6 @@
         "state": {
           "branch": "master",
           "revision": "3e4d37be73c4a75225cac9bf10969860d9a64487",
-          "version": null
-        }
-      },
-      {
-        "package": "VideoPlayer",
-        "repositoryURL": "https://github.com/Apollonyan/VideoPlayer.git",
-        "state": {
-          "branch": "master",
-          "revision": "fb5d012f475e23c580f6aca8e03eebd6e16d2998",
           "version": null
         }
       }

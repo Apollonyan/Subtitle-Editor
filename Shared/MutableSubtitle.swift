@@ -91,25 +91,3 @@ extension MutableSubtitle: Subtitle {
     }
   }
 }
-
-import protocol SwiftUI.FileDocument
-import UniformTypeIdentifiers
-
-extension UTType {
-  static let srt = UTType(filenameExtension: "srt")!
-}
-
-extension MutableSubtitle: FileDocument {
-  static var readableContentTypes: [UTType] = [.srt]
-
-  init(configuration: ReadConfiguration) throws {
-    guard let data = configuration.file.regularFileContents else {
-      throw CocoaError(.fileReadCorruptFile)
-    }
-    try self.init(data: data)
-  }
-
-  func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper {
-    return try FileWrapper(regularFileWithContents: asData())
-  }
-}
