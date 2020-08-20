@@ -96,7 +96,7 @@ import protocol SwiftUI.FileDocument
 import UniformTypeIdentifiers
 
 extension UTType {
-  static let srt = UTType(filenameExtension: "srt", conformingTo: .text)!
+  static let srt = UTType(filenameExtension: "srt")!
 }
 
 extension MutableSubtitle: FileDocument {

@@ -11,9 +11,10 @@ import AVFoundation
 let MSEC_PER_SEC = 1000
 
 extension CMTime {
-  var seconds: TimeInterval {
+  /// Provides "write access" to the property `seconds`.
+  var _seconds: TimeInterval {
     get {
-      return CMTimeGetSeconds(self)
+      return seconds
     }
     set {
       self = CMTimeMakeWithSeconds(newValue,

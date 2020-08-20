@@ -116,83 +116,109 @@ struct ContentView: View {
           }
         }
         .aspectRatio(CGSize(width: 16, height: 9), contentMode: .fit)
+        .contextMenu {
+          chooseVideoButton
+        }
 
       if currentIndex != nil {
         displaySubtitle(at: currentIndex!)
       }
     }
     .onTapGesture {
-      isPlaying.toggle()
+      withAnimation {
+        isPlaying.toggle()
+      }
     }
   }
-  
+
+  @Namespace var vcpSpace
   var videoControlPanel: some View {
-    VStack {
+    VStack(spacing: 8) {
       videoPlayer
 
       HStack(spacing: 16) {
-        Text(currentTime.seconds.hms)
+        if isPlaying {
+          Text(currentTime.seconds.hms)
+            .font(.system(.body, design: .monospaced))
+            .matchedGeometryEffect(id: "curTime", in: vcpSpace)
+        } else {
+          HStack {
+            Image(systemName: "signpost.right.fill")
+              .accessibilityLabel("Jump to")
+              .accessibilityLabeledPair(role: .label, id: "curTime", in: vcpSpace)
+            TextField("time/segment", text: $jumpTarget, onCommit: {
+              let segments = jumpTarget
+                .components(separatedBy: ":")
+                .compactMap(Double.init)
+              switch segments.count {
+              case 1:
+                let index = Int(segments[0]) - 1
+                if subtitles.segments.indices.contains(index) {
+                  currentTime._seconds = subtitles.segments[index].startTime
+                }
+              case 2...:
+                let desired = segments
+                  .reversed().enumerated()
+                  .reduce(0) { $0 + pow(60, Double($1.0)) * $1.1 }
+                currentTime._seconds = min(max(desired, 0), videoDuration)
+              default:
+                break
+              }
+              jumpTarget = currentTime.seconds.hms
+            })
+            .font(.system(.body, design: .monospaced))
+            .fixedSize()
+            .accessibilityLabeledPair(role: .content, id: "curTime", in: vcpSpace)
+            .onAppear {
+              jumpTarget = currentTime.seconds.hms
+            }
+          }
+          .matchedGeometryEffect(id: "curTime", in: vcpSpace,
+                                 anchor: .leading, isSource: false)
+        }
 
         Text("\(playbackRate.hundredths)x")
           .contextMenu {
-            ForEach(Array(stride(from: 0.5, through: Float(2), by: 0.5)), id: \.self) { rate in
-              Button(action: { playbackRate = rate }) {
-                Text("\(rate.hundredths)x")
+            ForEach([0.5 as Float, 1, 1.5, 1.75, 2], id: \.self) { rate in
+              Button("\(rate.hundredths)x") {
+                playbackRate = rate
               }
             }
           }
 
-        Slider(value: $currentTime.seconds, in: 0...videoDuration)
+        Slider(value: $currentTime._seconds, in: 0...videoDuration)
 
         Text(videoDuration.hms)
+          .font(.system(.body, design: .monospaced))
       }
 
-      HStack {
-        Text("Jump to: ")
-        TextField("time/segment", text: $jumpTarget, onCommit: {
-          let segments = jumpTarget
-            .components(separatedBy: ":")
-            .compactMap(Double.init)
-          switch segments.count {
-          case 1:
-            let index = Int(segments[0]) - 1
-            if subtitles.segments.indices.contains(index) {
-              currentTime.seconds = subtitles.segments[index].startTime
-            }
-          case 2...:
-            let desired = segments
-              .reversed().enumerated()
-              .reduce(0) { $0 + pow(60, Double($1.0)) * $1.1 }
-            currentTime.seconds = min(max(desired, 0), videoDuration)
-          default:
-            break
-          }
-          jumpTarget = ""
-        })
-      }
-
-      HStack(alignment: .lastTextBaseline, spacing: 32) {
-        Button(action: {
-          currentTime.seconds = max(0, currentTime.seconds - 15)
-        }) {
+      HStack(spacing: 32) {
+        Button {
+          currentTime._seconds = max(0, currentTime.seconds - 15)
+        } label: {
           Image(systemName: "gobackward.15")
             .font(.title)
         }
+        .buttonStyle(BorderlessButtonStyle())
         .disabled(currentTime.seconds < 5)
 
-        Button(action: {
-          isPlaying.toggle()
-        }) {
+        Button {
+          withAnimation {
+            isPlaying.toggle()
+          }
+        } label: {
           Image(systemName: isPlaying ? "pause.rectangle.fill" : "play.rectangle.fill")
             .font(.largeTitle)
         }
+        .buttonStyle(BorderlessButtonStyle())
 
-        Button(action: {
-          currentTime.seconds = min(videoDuration, currentTime.seconds + 15)
-        }) {
+        Button {
+          currentTime._seconds = min(videoDuration, currentTime.seconds + 15)
+        } label: {
           Image(systemName: "goforward.15")
             .font(.title)
         }
+        .buttonStyle(BorderlessButtonStyle())
         .disabled(currentTime.seconds + 5 > videoDuration)
       }
     }
@@ -209,7 +235,9 @@ struct ContentView: View {
                   Text(String(format: "%4d", segment.id))
                     .font(.system(.title, design: .monospaced))
                     .fontWeight(.semibold)
-                    .foregroundColor(.gray)
+                    .foregroundColor(currentIndex == segment.id - 1
+                                      ? .white
+                                      : .secondary)
                   /*
                    VStack {
                    Text(SRT.Segment.timestamp(from: segment.startTime))
@@ -219,32 +247,30 @@ struct ContentView: View {
                    }
                    */
                 }
+                .padding(.leading, 16)
                 VStack {
-                  TextView(
-                    text: $subtitles.mutableSegments[segment.id - 1]._contents,
-                    textColor: { subtitle in
-                      let lines = subtitle.components(separatedBy: .newlines)
-                      let initial: UIColor? = lines.count > 2 ? .systemRed : nil
-                      return lines.reduce(initial) { (previousColor, currentLine) in
-                        switch format(currentLine).displayWidth {
-                        case ...36:
-                          return previousColor
-                        case ..<40 where previousColor < UIColor.systemIndigo:
-                          return UIColor.systemIndigo
-                        case ..<46 where previousColor < UIColor.systemOrange:
-                          return UIColor.systemOrange
-                        default:
-                          return UIColor.systemRed
-                        }
+                  TextEditor(text: $subtitles.mutableSegments[segment.id - 1]._contents)
+                    .foregroundColor(segment.contents.reduce(segment.contents.count > 2 ? .red : nil) {
+                      (previousColor, currentLine) in
+                      switch format(currentLine).displayWidth {
+                      case ...36:
+                        return previousColor
+                      case ..<40 where previousColor < .purple:
+                        return .purple
+                      case ..<46 where previousColor < .orange:
+                        return .orange
+                      default:
+                        return .red
                       }
-                    }
-                  )
+                    })
                 }
               }
               .onTapGesture {
-                currentTime.seconds = segment.startTime
+                currentTime._seconds = segment.startTime
               }
-              .background(currentIndex == segment.id - 1 ? Color.yellow.opacity(0.5) : nil)
+              .background(currentIndex == segment.id - 1
+                            ? Color.accentColor.cornerRadius(8)
+                            : nil)
             }
           }
           .listStyle(PlainListStyle())
@@ -264,68 +290,90 @@ struct ContentView: View {
     }
   }
 
+  var chooseVideoButton: some View {
+    PickerButton(documentTypes: [.movie]) { url in
+      #if targetEnvironment(macCatalyst)
+      UserDefaults.standard
+        .set(try? url.bookmarkData(options: .withSecurityScope),
+             forKey: "VIDEO_URL_BOOKMARK")
+      #endif
+      DispatchQueue.main.async {
+        videoURL = url
+      }
+    } label: {
+      Text("Choose Video")
+    }
+  }
+
   var videoArea: some View {
-    Group {
+    VStack {
+      Spacer()
       if videoURL != nil {
         videoControlPanel
       } else {
-        VStack {
+        HStack {
           Spacer()
-          HStack {
-            Spacer()
-            PickerButton(documentTypes: [.movie], onSelect: { url in
-              #if targetEnvironment(macCatalyst)
-              UserDefaults.standard
-                .set(try? url.bookmarkData(options: .withSecurityScope),
-                     forKey: "VIDEO_URL_BOOKMARK")
-              #endif
-              DispatchQueue.main.async {
-                videoURL = url
-              }
-            }, label: {
-              Text("Choose Video")
-            })
-            Spacer()
-          }
+          chooseVideoButton
           Spacer()
         }
+      }
+      Spacer()
+    }
+  }
+
+  @Environment(\.horizontalSizeClass) private var hSizeClass
+  var body: some View {
+    GeometryReader { geo in
+      if hSizeClass == .compact || geo.size.height > geo.size.width {
+        safeVideoReload(
+          VStack {
+            videoArea
+            subtitleEditorPanel
+          }
+          .padding()
+        )
+      } else {
+        safeVideoReload(
+          HStack(spacing: 16) {
+            videoArea
+            subtitleEditorPanel
+              .frame(idealWidth: max(geo.size.width * 0.3, 500),
+                     idealHeight: geo.size.height)
+              .fixedSize()
+          }
+          .padding()
+        )
       }
     }
   }
 
-  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-  var body: some View {
-    Group {
-      if horizontalSizeClass == .compact {
-        VStack {
-          videoArea
-          subtitleEditorPanel
+  func safeVideoReload<Content: View>(_ content: Content) -> some View {
+    content
+      .onDisappear {
+        withAnimation {
+          isPlaying = false
         }
-      } else {
-        GeometryReader { geo in
-          HStack {
-            videoArea
-            subtitleEditorPanel
-              .frame(idealWidth: max(geo.size.width * 0.3, 500), idealHeight: geo.size.height)
-              .fixedSize()
+      }
+      .onAppear {
+        DispatchQueue.global().asyncAfter(deadline: .now() + 0.5) {
+          withAnimation {
+            isPlaying = true
           }
         }
-        .padding()
       }
-    }
   }
 }
 
-extension UIColor: Comparable {
-  public static func < (lhs: UIColor, rhs: UIColor) -> Bool {
+extension Color: Comparable {
+  public static func < (lhs: Color, rhs: Color) -> Bool {
     switch (lhs, rhs) {
     case let (x, y) where x == y:
       return false
-    case (_, .systemRed):
+    case (_, .red):
       return true
-    case (_, .systemOrange):
+    case (_, .orange):
       return true
-    case (_, .systemIndigo):
+    case (_, .purple):
       return true
     default:
       return false
@@ -348,6 +396,12 @@ extension Optional: Comparable where Wrapped: Comparable {
 
 struct ContentView_Previews: PreviewProvider {
   static var previews: some View {
-    ContentView(subtitles: .constant(MutableSubtitle(segments: [])))
+    ContentView(
+      subtitles: .constant(
+        MutableSubtitle(mutableSegments: [
+          .init(id: 1, startTime: 0, endTime: 0, _contents: "Hello")
+        ])
+      )
+    )
   }
 }
