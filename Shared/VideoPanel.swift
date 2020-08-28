@@ -22,35 +22,37 @@ fileprivate struct SubtitleStyle: ViewModifier {
 }
 
 struct VideoPanel: View {
+  @EnvironmentObject var appState: SubtitleEditorState
+  @ObservedObject var videoSource = VideoSource()
 
-  @ObservedObject var videoSource: VideoSource
-  @Binding var currentSubtitle: MutableSubtitle.Segment?
-
-  func displaySubtitle(at index: Int) -> some View {
-    let contents = currentSubtitle!.contents
-      .filter { !$0.isEmpty }
-    return GeometryReader { geo in
-      HStack {
-        Spacer()
-        VStack(spacing: 0) {
-          Spacer()
-          ForEach(contents, id: \.self) {
-            Text($0)
-              .modifier(SubtitleStyle(containerSize: geo.size))
-          }
-        }
-        Spacer()
+  var chooseVideoButton: some View {
+      PickerButton(documentTypes: [.movie]) { url in
+        videoSource.loadURL(url)
+      } label: {
+        Text("Choose Video")
       }
-      .padding(.bottom, 20)
     }
-    .aspectRatio(CGSize(width: 16, height: 9), contentMode: .fit)
-  }
 
   var videoPlayer: some View {
     VideoPlayer(player: videoSource.avPlayer) {
-      if let index = currentIndex {
-        displaySubtitle(at: index)
+      GeometryReader { geo in
+        HStack {
+          Spacer()
+          VStack(spacing: 0) {
+            Spacer()
+            if let contents = appState.currentSegment?.contents.filter { !$0.isEmpty },
+               !contents.isEmpty {
+              ForEach(contents, id: \.self) {
+                Text($0)
+                  .modifier(SubtitleStyle(containerSize: geo.size))
+              }
+            }
+          }
+          Spacer()
+        }
+        .padding(.bottom, 20)
       }
+      .aspectRatio(CGSize(width: 16, height: 9), contentMode: .fit)
     }
     .aspectRatio(CGSize(width: 16, height: 9), contentMode: .fit)
     .onTapGesture {
@@ -65,103 +67,114 @@ struct VideoPanel: View {
 
   @State private var jumpTarget: String = ""
   @Namespace var vcpSpace
+  var controlBar: some View {
+    HStack(spacing: 8) {
+      if videoSource.isPlaying {
+        Text(videoSource.currentTime.seconds.hms)
+          .font(.system(.body, design: .monospaced))
+          .matchedGeometryEffect(id: "curTime", in: vcpSpace, isSource: false)
+      } else {
+        HStack {
+          Image(systemName: "signpost.right.fill")
+            .accessibilityLabel("Jump to")
+            .accessibilityLabeledPair(role: .label, id: "curTime", in: vcpSpace)
+          TextField("time/segment", text: $jumpTarget, onCommit: {
+            guard let target = appState.timeInterval(for: jumpTarget) else { return }
+            videoSource.currentTime._seconds = min(max(target, 0), videoSource.duration)
+            jumpTarget = videoSource.currentTime.seconds.hms
+          })
+          .font(.system(.body, design: .monospaced))
+          .textFieldStyle(PlainTextFieldStyle())
+          .fixedSize()
+          .accessibilityLabeledPair(role: .content, id: "curTime", in: vcpSpace)
+          .onAppear {
+            jumpTarget = videoSource.currentTime.seconds.hms
+          }
+        }
+        .matchedGeometryEffect(id: "curTime", in: vcpSpace,
+                               anchor: .leading, isSource: false)
+      }
+
+      Text("\(videoSource.desiredPlaybackRate.hundredths)x")
+        .contextMenu {
+          ForEach([0.5 as Float, 1, 1.5, 1.75, 2], id: \.self) { rate in
+            Button("\(rate.hundredths)x") {
+              videoSource.desiredPlaybackRate = rate
+            }
+          }
+        }
+
+      Text(videoSource.duration.hms)
+        .font(.system(.body, design: .monospaced))
+    }
+  }
+
+  var playbackBar: some View {
+    HStack(spacing: 32) {
+      Button {
+        videoSource.currentTime._seconds = max(0, videoSource.currentTime.seconds - 15)
+      } label: {
+        Image(systemName: "gobackward.15")
+          .font(.title)
+      }
+      .buttonStyle(BorderlessButtonStyle())
+      .disabled(videoSource.currentTime.seconds < 5)
+
+      Button {
+        withAnimation {
+          videoSource.isPlaying.toggle()
+        }
+      } label: {
+        Image(systemName: videoSource.isPlaying
+                ? "pause.rectangle.fill"
+                : "play.rectangle.fill")
+          .font(.largeTitle)
+      }
+      .buttonStyle(BorderlessButtonStyle())
+
+      Button {
+        videoSource.currentTime._seconds = min(videoSource.duration, videoSource.currentTime.seconds + 15)
+      } label: {
+        Image(systemName: "goforward.15")
+          .font(.title)
+      }
+      .buttonStyle(BorderlessButtonStyle())
+      .disabled(videoSource.currentTime.seconds + 5 > videoSource.duration)
+    }
+  }
+
   var videoControlPanel: some View {
     VStack(spacing: 8) {
       videoPlayer
-
-      HStack(spacing: 8) {
-        if videoSource.isPlaying {
-          Text(videoSource.currentTime.seconds.hms)
-            .font(.system(.body, design: .monospaced))
-            .matchedGeometryEffect(id: "curTime", in: vcpSpace, isSource: false)
-        } else {
-          HStack {
-            Image(systemName: "signpost.right.fill")
-              .accessibilityLabel("Jump to")
-              .accessibilityLabeledPair(role: .label, id: "curTime", in: vcpSpace)
-            TextField("time/segment", text: $jumpTarget, onCommit: {
-              let segments = jumpTarget
-                .components(separatedBy: ":")
-                .compactMap(Double.init)
-              switch segments.count {
-              case 1:
-                let index = Int(segments[0]) - 1
-                if subtitles.segments.indices.contains(index) {
-                  videoSource.currentTime._seconds = subtitles.segments[index].startTime
-                }
-              case 2...:
-                let desired = segments
-                  .reversed().enumerated()
-                  .reduce(0) { $0 + pow(60, Double($1.0)) * $1.1 }
-                videoSource.currentTime._seconds = min(max(desired, 0), videoSource.duration)
-              default:
-                break
-              }
-              jumpTarget = videoSource.currentTime.seconds.hms
-            })
-            .font(.system(.body, design: .monospaced))
-            .textFieldStyle(PlainTextFieldStyle())
-            .fixedSize()
-            .accessibilityLabeledPair(role: .content, id: "curTime", in: vcpSpace)
-            .onAppear {
-              jumpTarget = videoSource.currentTime.seconds.hms
-            }
-          }
-          .matchedGeometryEffect(id: "curTime", in: vcpSpace,
-                                 anchor: .leading, isSource: false)
-        }
-
-        Text("\(videoSource.desiredPlaybackRate.hundredths)x")
-          .contextMenu {
-            ForEach([0.5 as Float, 1, 1.5, 1.75, 2], id: \.self) { rate in
-              Button("\(rate.hundredths)x") {
-                videoSource.desiredPlaybackRate = rate
-              }
-            }
-          }
-
-        Slider(value: $videoSource.currentTime._seconds, in: 0...videoSource.duration)
-
-        Text(videoSource.duration.hms)
-          .font(.system(.body, design: .monospaced))
-      }
-
-      HStack(spacing: 32) {
-        Button {
-          videoSource.currentTime._seconds = max(0, videoSource.currentTime.seconds - 15)
-        } label: {
-          Image(systemName: "gobackward.15")
-            .font(.title)
-        }
-        .buttonStyle(BorderlessButtonStyle())
-        .disabled(videoSource.currentTime.seconds < 5)
-
-        Button {
-          withAnimation {
-            videoSource.isPlaying.toggle()
-          }
-        } label: {
-          Image(systemName: videoSource.isPlaying
-                  ? "pause.rectangle.fill"
-                  : "play.rectangle.fill")
-            .font(.largeTitle)
-        }
-        .buttonStyle(BorderlessButtonStyle())
-
-        Button {
-          videoSource.currentTime._seconds = min(videoSource.duration, videoSource.currentTime.seconds + 15)
-        } label: {
-          Image(systemName: "goforward.15")
-            .font(.title)
-        }
-        .buttonStyle(BorderlessButtonStyle())
-        .disabled(videoSource.currentTime.seconds + 5 > videoSource.duration)
-      }
+      controlBar
+      playbackBar
     }
   }
 
   var body: some View {
-      Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+    VStack {
+      Spacer()
+      if videoSource.avPlayer != nil {
+        videoControlPanel
+          .onChange(of: videoSource.currentTime) { newValue in
+            appState.currentTime = newValue
+          }
+      } else {
+        HStack {
+          Spacer()
+          chooseVideoButton
+          Spacer()
+        }
+      }
+      Spacer()
+    }
+    .onAppear {
+      if let url = UserDefaults.standard
+          .withSecurityScopedURL(forKey: "VIDEO_URL_BOOKMARK",
+                                 autoScope: false, then: { $0 }) {
+        videoSource.loadURL(url)
+      }
+    }
   }
 }
 

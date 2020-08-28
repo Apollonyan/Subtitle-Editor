@@ -32,14 +32,6 @@ extension TimeInterval {
   }
 }
 
-class IntRef {
-  var intValue: Int
-  
-  init(_ intValue: Int) {
-    self.intValue = intValue
-  }
-}
-
 import Foundation
 
 extension UserDefaults {

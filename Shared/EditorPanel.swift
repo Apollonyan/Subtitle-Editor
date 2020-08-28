@@ -6,58 +6,23 @@
 //
 
 import SwiftUI
+import func tidysub.format
 
 struct EditorPanel: View {
-  @Binding public var subtitles: MutableSubtitle
-
-  private var currentIndex: Int? {
-    let index = _currentIndex.intValue
-    let currentTimeSec = videoSource.currentTime.seconds
-    quickCheck: if index < subtitles.segments.count {
-      let nextIndex = index + 1
-      if nextIndex == subtitles.segments.count {
-        if subtitles.segments[index].contains(currentTimeSec) {
-          return index
-        }
-        break quickCheck
-      }
-      if abs(currentTimeSec - subtitles.segments[nextIndex].startTime) < 0.001 {
-        _currentIndex.intValue = nextIndex
-        return nextIndex
-      }
-      if subtitles.segments[index].contains(currentTimeSec) {
-        return index
-      }
-      if (subtitles.segments[index].endTime...subtitles.segments[nextIndex].startTime)
-          .contains(currentTimeSec) {
-        return nil
-      }
-      if subtitles.segments[nextIndex].contains(currentTimeSec) {
-        _currentIndex.intValue = nextIndex
-        return nextIndex
-      }
-    }
-    if let actualIndex = subtitles.indexOf(currentTimeSec) {
-      _currentIndex.intValue = actualIndex
-      return actualIndex
-    } else {
-      return nil
-    }
-  }
-  private var _currentIndex = IntRef(0)
+  @EnvironmentObject var appState: SubtitleEditorState
 
   var body: some View {
     ScrollViewReader { proxy in
       ScrollView {
-        if !subtitles.mutableSegments.isEmpty {
+        if !appState.subtitles.mutableSegments.isEmpty {
           LazyVStack {
-            ForEach(subtitles.mutableSegments) { segment in
+            ForEach(appState.subtitles.mutableSegments) { segment in
               HStack(spacing: 8) {
                 HStack {
                   Text(String(format: "%-4d", segment.id))
                     .font(.system(.title, design: .monospaced))
                     .fontWeight(.semibold)
-                    .foregroundColor(currentIndex == segment.id - 1
+                    .foregroundColor(appState.currentIndex == segment.id - 1
                                       ? .white
                                       : .secondary)
                   /*
@@ -71,7 +36,7 @@ struct EditorPanel: View {
                 }
                 .padding(.leading, 8)
                 VStack {
-                  TextEditor(text: $subtitles.mutableSegments[segment.id - 1]._contents)
+                  TextEditor(text: appState._subtitles.mutableSegments[segment.id - 1]._contents)
                     .foregroundColor(segment.contents.reduce(segment.contents.count > 2 ? .red : nil) {
                       (previousColor, currentLine) in
                       switch format(currentLine).displayWidth {
@@ -89,17 +54,19 @@ struct EditorPanel: View {
                 }
               }
               .onTapGesture {
-                videoSource.currentTime._seconds = segment.startTime
+                appState.currentTime._seconds = segment.startTime
               }
-              .background(currentIndex == segment.id - 1
+              .background(appState.currentIndex == segment.id - 1
                             ? Color.accentColor.cornerRadius(8)
                             : nil)
             }
           }
           .listStyle(PlainListStyle())
-          .onChange(of: videoSource.currentTime) { [oldIndex = currentIndex ?? 0] _ in
-            guard let index = currentIndex, index != oldIndex else { return }
-            let targetID = subtitles.mutableSegments[index].id
+          .onChange(of: appState.currentTime) { [oldIndex = appState.currentIndex ?? 0] _ in
+            guard let index = appState.currentIndex, index != oldIndex else {
+              return
+            }
+            let targetID = appState.currentSegment!.id
             if abs(index - oldIndex) < 10 {
               withAnimation(.easeOut) {
                 proxy.scrollTo(targetID, anchor: .center)

@@ -13,29 +13,7 @@ import srt
 import tidysub
 
 struct ContentView: View {
-  var chooseVideoButton: some View {
-    PickerButton(documentTypes: [.movie]) { url in
-      videoSource = VideoSource(url: url)
-    } label: {
-      Text("Choose Video")
-    }
-  }
-
-  var videoArea: some View {
-    VStack {
-      Spacer()
-      if videoSource != nil {
-        videoControlPanel
-      } else {
-        HStack {
-          Spacer()
-          chooseVideoButton
-          Spacer()
-        }
-      }
-      Spacer()
-    }
-  }
+  @EnvironmentObject var state: SubtitleEditorState
 
   #if os(iOS)
   @Environment(\.horizontalSizeClass) private var hSizeClass
@@ -64,16 +42,16 @@ struct ContentView: View {
     GeometryReader { geo in
       if geo.size.height > geo.size.width {
         VSplitView {
-          videoArea
+          VideoPanel()
             .padding()
-          subtitleEditorPanel
+          EditorPanel()
             .padding()
         }
       } else {
         HSplitView {
-          videoArea
+          VideoPanel()
             .padding()
-          subtitleEditorPanel
+          EditorPanel()
             .padding()
         }
       }
@@ -114,17 +92,16 @@ extension Optional: Comparable where Wrapped: Comparable {
 
 struct ContentView_Previews: PreviewProvider {
   static var previews: some View {
-    ContentView(
-      subtitles: .constant(
-        MutableSubtitle(mutableSegments: [
-          .init(id: 1, startTime: 0, endTime: 0, _contents: "Hello"),
-          .init(id: 1234, startTime: 0, endTime: 0, _contents: """
-              Very Long
-              Very good
-              """
-          )
-        ])
-      )
-    )
+    ContentView()
+    /**
+     MutableSubtitle(mutableSegments: [
+       .init(id: 1, startTime: 0, endTime: 0, _contents: "Hello"),
+       .init(id: 1234, startTime: 0, endTime: 0, _contents: """
+           Very Long
+           Very good
+           """
+       )
+     ])
+     */
   }
 }

@@ -11,20 +11,21 @@ import Combine
 import SwiftUI
 
 class VideoSource: ObservableObject {
-  let avPlayer: AVPlayer
+  @Published var avPlayer: AVPlayer?
   @Published var desiredPlaybackRate: Float = 1 {
     didSet {
       if isPlaying {
-        avPlayer.playImmediately(atRate: desiredPlaybackRate)
+        avPlayer?.playImmediately(atRate: desiredPlaybackRate)
       }
     }
   }
-  @Published var isPlaying: Bool = true {
+  @Published var isPlaying: Bool = false {
     didSet {
+      guard isPlaying != oldValue else { return }
       if isPlaying {
-        avPlayer.playImmediately(atRate: desiredPlaybackRate)
+        avPlayer?.playImmediately(atRate: desiredPlaybackRate)
       } else {
-        avPlayer.pause()
+        avPlayer?.pause()
       }
     }
   }
@@ -32,47 +33,50 @@ class VideoSource: ObservableObject {
   @Published var currentTime: CMTime = .zero {
     didSet {
       if actualCurrentTime != currentTime {
-        avPlayer.seek(to: currentTime)
+        avPlayer?.seek(to: currentTime)
       }
     }
   }
   @Published var duration: TimeInterval = 0
 
   private var currentTimeObservation: Any!
-  private var durationObservation: NSKeyValueObservation!
-  init?(url: URL? = UserDefaults.standard
-          .withSecurityScopedURL(forKey: "VIDEO_URL_BOOKMARK", autoScope: false) {
-            _ = $0?.startAccessingSecurityScopedResource()
-            return $0
-          }) {
-    guard let url = url else {
-      return nil
-    }
+  private var statusObservation: AnyCancellable!
+  private var durationObservation: AnyCancellable!
+
+  deinit {
+    invalidate()
+  }
+
+  func loadURL(_ url: URL) {
+    invalidate()
     #if os(macOS)
     UserDefaults.standard
       .set(try? url.bookmarkData(options: .withSecurityScope),
            forKey: "VIDEO_URL_BOOKMARK")
     #endif
+    _ = url.startAccessingSecurityScopedResource()
     avPlayer = AVPlayer(url: url)
     let interval = CMTime(seconds: 0.25, preferredTimescale: 50)
-    currentTimeObservation = avPlayer
+    currentTimeObservation = avPlayer!
       .addPeriodicTimeObserver(forInterval: interval, queue: nil) {
         [weak self] time in
         self?.actualCurrentTime = time
         self?.currentTime = time
       }
-    durationObservation = avPlayer.currentItem!
-      .observe(\.duration, options: [.initial, .new]) {
-        [weak self] (item, change) in
-        guard let self = self, let newValue = change.newValue else { return }
-        self.duration = newValue == .indefinite ? 0 : newValue.seconds
-      }
+    statusObservation = avPlayer!.publisher(for: \.timeControlStatus)
+      .map { $0 != .paused }
+      .assign(to: \.isPlaying, on: self)
+    durationObservation = avPlayer!.publisher(for: \.currentItem?.duration)
+      .map { $0.flatMap { $0 == .indefinite ? 0 : $0.seconds } ?? 0}
+      .assign(to: \.duration, on: self)
   }
 
-  deinit {
+  func invalidate() {
+    guard let avPlayer = avPlayer else { return }
     avPlayer.pause()
     avPlayer.removeTimeObserver(currentTimeObservation!)
-    durationObservation.invalidate()
+    statusObservation.cancel()
+    durationObservation.cancel()
     (avPlayer.currentItem?.asset as? AVURLAsset)?.url
       .stopAccessingSecurityScopedResource()
   }
