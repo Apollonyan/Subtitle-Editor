@@ -21,14 +21,14 @@ struct ContentView: View {
     GeometryReader { geo in
       if hSizeClass == .compact || geo.size.height > geo.size.width {
         VStack(spacing: 8) {
-          videoArea
-          subtitleEditorPanel
+          VideoPanel()
+          EditorPanel()
         }
         .padding()
       } else {
         HStack(spacing: 16) {
-          videoArea
-          subtitleEditorPanel
+          VideoPanel()
+          EditorPanel()
             .frame(idealWidth: max(geo.size.width * 0.3, 500),
                    idealHeight: geo.size.height)
             .fixedSize()
