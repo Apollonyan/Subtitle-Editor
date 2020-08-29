@@ -50,22 +50,7 @@ struct PhotosPicker: UIViewControllerRepresentable {
         guard let parent = self?.parent,
               let url = url as? URL
         else { return }
-        let tempURL = URL(fileURLWithPath: NSTemporaryDirectory(),
-                       isDirectory: true)
-            .appendingPathComponent(url.lastPathComponent)
-        if FileManager.default.fileExists(atPath: tempURL.path) {
-          do {
-            try FileManager.default.removeItem(at: tempURL)
-          } catch {
-            ppLogger.log(level: .fault, "\(error.localizedDescription, privacy: .public)")
-          }
-        }
-        do {
-          try FileManager.default.copyItem(at: url, to: tempURL)
-        } catch {
-          ppLogger.log(level: .fault, "\(error.localizedDescription, privacy: .public)")
-        }
-        parent.handleURL(tempURL)
+        parent.handleURL(url)
       }
     }
   }

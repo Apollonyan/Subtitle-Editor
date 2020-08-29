@@ -20,11 +20,6 @@ struct VideoPanel: View {
     } label: {
       Label("Choose Video", systemImage: "folder")
     }
-    .fileImporter(isPresented: $isChoosingVideo, allowedContentTypes: [.movie]) { (result) in
-      if let url = try? result.get() {
-        videoSource.loadURL(url)
-      }
-    }
   }
 
   #if os(iOS)
@@ -71,6 +66,11 @@ struct VideoPanel: View {
     .onTapGesture {
       withAnimation {
         videoSource.isPlaying.toggle()
+      }
+    }
+    .fileImporter(isPresented: $isChoosingVideo, allowedContentTypes: [.movie]) { (result) in
+      if let url = try? result.get() {
+        videoSource.loadURL(url)
       }
     }
   }
@@ -211,6 +211,11 @@ struct VideoPanel: View {
         HStack {
           Spacer()
           chooseVideoButton
+            .fileImporter(isPresented: $isChoosingVideo, allowedContentTypes: [.movie]) { (result) in
+              if let url = try? result.get() {
+                videoSource.loadURL(url)
+              }
+            }
           Spacer()
         }
       }
