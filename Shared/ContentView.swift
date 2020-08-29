@@ -16,22 +16,41 @@ struct ContentView: View {
   @EnvironmentObject var state: SubtitleEditorState
   @StateObject var videoSource = VideoSource()
 
+
+  var videoPanel: some View {
+    #if os(iOS)
+    return VideoPanel(videoSource: videoSource)
+    #else
+    return VideoPanel(videoSource: videoSource)
+      .padding()
+    #endif
+  }
+
+  var editorPanel: some View {
+    #if os(iOS)
+    return EditorPanel()
+    #else
+    return EditorPanel()
+      .padding()
+    #endif
+  }
+
   #if os(iOS)
   @Environment(\.horizontalSizeClass) private var hSizeClass
   var body: some View {
     GeometryReader { geo in
       if geo.size.height > geo.size.width && hSizeClass == .compact {
         VStack(spacing: 8) {
-          VideoPanel(videoSource: videoSource)
-          EditorPanel()
+          videoPanel
+          editorPanel
         }
         .padding()
         .ignoresSafeArea(.container, edges: .bottom)
       } else {
         HStack(spacing: 16) {
-          VideoPanel(videoSource: videoSource)
-          EditorPanel()
-            .frame(idealWidth: max(geo.size.width * 0.3, 500),
+          videoPanel
+          editorPanel
+            .frame(idealWidth: min(max(500, geo.size.width * 0.3), geo.size.width * 0.5),
                    idealHeight: geo.size.height)
             .fixedSize()
         }
@@ -43,17 +62,13 @@ struct ContentView: View {
     GeometryReader { geo in
       if geo.size.height > geo.size.width {
         VSplitView {
-          VideoPanel()
-            .padding()
-          EditorPanel()
-            .padding()
+          videoPanel
+          editorPanel
         }
       } else {
         HSplitView {
-          VideoPanel()
-            .padding()
-          EditorPanel()
-            .padding()
+          videoPanel
+          editorPanel
         }
       }
     }
@@ -96,12 +111,12 @@ struct ContentView_Previews: PreviewProvider {
     ContentView()
     /**
      MutableSubtitle(mutableSegments: [
-       .init(id: 1, startTime: 0, endTime: 0, _contents: "Hello"),
-       .init(id: 1234, startTime: 0, endTime: 0, _contents: """
-           Very Long
-           Very good
-           """
-       )
+     .init(id: 1, startTime: 0, endTime: 0, _contents: "Hello"),
+     .init(id: 1234, startTime: 0, endTime: 0, _contents: """
+     Very Long
+     Very good
+     """
+     )
      ])
      */
   }

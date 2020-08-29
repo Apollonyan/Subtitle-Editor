@@ -63,7 +63,7 @@ struct VideoPanel: View {
     .aspectRatio(CGSize(width: 16, height: 9), contentMode: .fit)
   }
 
-  var videoPlayer: some View {
+  var crossPlatformVideoPlayer: some View {
     VideoPlayer(player: videoSource.avPlayer) {
       subtitle
     }
@@ -73,19 +73,28 @@ struct VideoPanel: View {
         videoSource.isPlaying.toggle()
       }
     }
-    .contextMenu {
-      #if os(iOS)
-      chooseFromPhotosLibraryButton
-      #endif
-      chooseVideoButton
-    }
-    .sheet(isPresented: $isChoosingPhotosLibrary) {
-      PhotosPicker(isPresented: $isChoosingPhotosLibrary) { url in
-        DispatchQueue.main.async {
-          videoSource.loadURL(url)
+  }
+
+  var videoPlayer: some View {
+    #if os(iOS)
+    return crossPlatformVideoPlayer
+      .contextMenu {
+        chooseFromPhotosLibraryButton
+        chooseVideoButton
+      }
+      .sheet(isPresented: $isChoosingPhotosLibrary) {
+        PhotosPicker(isPresented: $isChoosingPhotosLibrary) { url in
+          DispatchQueue.main.async {
+            videoSource.loadURL(url)
+          }
         }
       }
-    }
+    #else
+    return crossPlatformVideoPlayer
+      .contextMenu {
+        chooseVideoButton
+      }
+    #endif
   }
 
   @State private var jumpTarget: String = ""
@@ -126,6 +135,8 @@ struct VideoPanel: View {
             }
           }
         }
+
+      Slider(value: $videoSource.currentTime._seconds, in: 0...videoSource.duration)
 
       Text(videoSource.duration.hms)
         .font(.system(.body, design: .monospaced))
@@ -216,7 +227,7 @@ struct VideoPanel: View {
 }
 
 struct VideoPanel_Previews: PreviewProvider {
-    static var previews: some View {
-      VideoPanel(videoSource: VideoSource())
-    }
+  static var previews: some View {
+    VideoPanel(videoSource: VideoSource())
+  }
 }
