@@ -21,7 +21,9 @@ class VideoSource: ObservableObject {
   }
   @Published var isPlaying: Bool = false {
     didSet {
-      guard isPlaying != oldValue else { return }
+      guard isPlaying != oldValue,
+            avPlayer?.status == .readyToPlay
+      else { return }
       if isPlaying {
         avPlayer?.playImmediately(atRate: desiredPlaybackRate)
       } else {
@@ -54,7 +56,7 @@ class VideoSource: ObservableObject {
       .set(try? url.bookmarkData(options: .withSecurityScope),
            forKey: "VIDEO_URL_BOOKMARK")
     #endif
-    _ = url.startAccessingSecurityScopedResource()
+    print(url.startAccessingSecurityScopedResource())
     avPlayer = AVPlayer(url: url)
     let interval = CMTime(seconds: 0.25, preferredTimescale: 50)
     currentTimeObservation = avPlayer!
@@ -77,7 +79,7 @@ class VideoSource: ObservableObject {
     avPlayer.removeTimeObserver(currentTimeObservation!)
     statusObservation.cancel()
     durationObservation.cancel()
-    (avPlayer.currentItem?.asset as? AVURLAsset)?.url
+    (avPlayer.currentItem!.asset as! AVURLAsset).url
       .stopAccessingSecurityScopedResource()
   }
 }

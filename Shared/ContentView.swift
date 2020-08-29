@@ -14,26 +14,27 @@ import tidysub
 
 struct ContentView: View {
   @EnvironmentObject var state: SubtitleEditorState
+  @StateObject var videoSource = VideoSource()
 
   #if os(iOS)
   @Environment(\.horizontalSizeClass) private var hSizeClass
   var body: some View {
     GeometryReader { geo in
-      if hSizeClass == .compact || geo.size.height > geo.size.width {
+      if geo.size.height > geo.size.width && hSizeClass == .compact {
         VStack(spacing: 8) {
-          VideoPanel()
+          VideoPanel(videoSource: videoSource)
           EditorPanel()
         }
         .padding()
+        .ignoresSafeArea(.container, edges: .bottom)
       } else {
         HStack(spacing: 16) {
-          VideoPanel()
+          VideoPanel(videoSource: videoSource)
           EditorPanel()
             .frame(idealWidth: max(geo.size.width * 0.3, 500),
                    idealHeight: geo.size.height)
             .fixedSize()
         }
-        .padding()
       }
     }
   }

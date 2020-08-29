@@ -7,52 +7,65 @@
 
 import SwiftUI
 import AVKit
-
-fileprivate struct SubtitleStyle: ViewModifier {
-  var containerSize: CGSize
-
-  func body(content: Content) -> some View {
-    content
-      .font(.system(size: containerSize.width / 1139 * 28))
-      .foregroundColor(.white)
-      .padding(.horizontal, 16)
-      .background(Color.black.opacity(0.4))
-      .cornerRadius(4)
-  }
-}
+import UniformTypeIdentifiers
 
 struct VideoPanel: View {
   @EnvironmentObject var appState: SubtitleEditorState
-  @ObservedObject var videoSource = VideoSource()
+  @ObservedObject var videoSource: VideoSource
 
+  @State var isChoosingVideo: Bool = false
   var chooseVideoButton: some View {
-      PickerButton(documentTypes: [.movie]) { url in
+    Button {
+      isChoosingVideo = true
+    } label: {
+      Label("Choose Video", systemImage: "folder")
+    }
+    .fileImporter(isPresented: $isChoosingVideo, allowedContentTypes: [.movie]) { (result) in
+      if let url = try? result.get() {
         videoSource.loadURL(url)
-      } label: {
-        Text("Choose Video")
       }
     }
+  }
+
+  #if os(iOS)
+  @State var isChoosingPhotosLibrary: Bool = false
+  var chooseFromPhotosLibraryButton: some View {
+    Button {
+      isChoosingPhotosLibrary = true
+    } label: {
+      Label("Choose from Photos Library", systemImage: "photo.on.rectangle.angled")
+    }
+  }
+  #endif
+
+  var subtitle: some View {
+    GeometryReader { geo in
+      HStack {
+        Spacer()
+        VStack(spacing: 0) {
+          Spacer()
+          if let contents = appState.currentSegment?.contents.filter { !$0.isEmpty },
+             !contents.isEmpty {
+            ForEach(contents, id: \.self) {
+              Text($0)
+                .font(.system(size: geo.size.width / 1139 * 28))
+                .foregroundColor(.white)
+                .padding(.horizontal, 16)
+                .background(Color.black.opacity(0.4))
+                .cornerRadius(4)
+            }
+          }
+        }
+        Spacer()
+      }
+      .padding(.bottom, 20)
+    }
+    .aspectRatio(CGSize(width: 16, height: 9), contentMode: .fit)
+  }
 
   var videoPlayer: some View {
     VideoPlayer(player: videoSource.avPlayer) {
-      GeometryReader { geo in
-        HStack {
-          Spacer()
-          VStack(spacing: 0) {
-            Spacer()
-            if let contents = appState.currentSegment?.contents.filter { !$0.isEmpty },
-               !contents.isEmpty {
-              ForEach(contents, id: \.self) {
-                Text($0)
-                  .modifier(SubtitleStyle(containerSize: geo.size))
-              }
-            }
-          }
-          Spacer()
-        }
-        .padding(.bottom, 20)
-      }
-      .aspectRatio(CGSize(width: 16, height: 9), contentMode: .fit)
+      subtitle
     }
     .aspectRatio(CGSize(width: 16, height: 9), contentMode: .fit)
     .onTapGesture {
@@ -61,7 +74,17 @@ struct VideoPanel: View {
       }
     }
     .contextMenu {
+      #if os(iOS)
+      chooseFromPhotosLibraryButton
+      #endif
       chooseVideoButton
+    }
+    .sheet(isPresented: $isChoosingPhotosLibrary) {
+      PhotosPicker(isPresented: $isChoosingPhotosLibrary) { url in
+        DispatchQueue.main.async {
+          videoSource.loadURL(url)
+        }
+      }
     }
   }
 
@@ -152,7 +175,7 @@ struct VideoPanel: View {
   }
 
   var body: some View {
-    VStack {
+    VStack(spacing: 8) {
       Spacer()
       if videoSource.avPlayer != nil {
         videoControlPanel
@@ -160,6 +183,20 @@ struct VideoPanel: View {
             appState.currentTime = newValue
           }
       } else {
+        #if os(iOS)
+        HStack {
+          Spacer()
+          chooseFromPhotosLibraryButton
+            .sheet(isPresented: $isChoosingPhotosLibrary) {
+              PhotosPicker(isPresented: $isChoosingPhotosLibrary) { url in
+                DispatchQueue.main.async {
+                  videoSource.loadURL(url)
+                }
+              }
+            }
+          Spacer()
+        }
+        #endif
         HStack {
           Spacer()
           chooseVideoButton
@@ -171,7 +208,7 @@ struct VideoPanel: View {
     .onAppear {
       if let url = UserDefaults.standard
           .withSecurityScopedURL(forKey: "VIDEO_URL_BOOKMARK",
-                                 autoScope: false, then: { $0 }) {
+                                 autoScope: true, then: { $0 }) {
         videoSource.loadURL(url)
       }
     }
@@ -180,6 +217,6 @@ struct VideoPanel: View {
 
 struct VideoPanel_Previews: PreviewProvider {
     static var previews: some View {
-        VideoPanel()
+      VideoPanel(videoSource: VideoSource())
     }
 }
