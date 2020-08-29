@@ -68,6 +68,14 @@ struct VideoPanel: View {
         videoSource.isPlaying.toggle()
       }
     }
+    .onAppear {
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+        videoSource.isPlaying = true
+      }
+    }
+    .onDisappear {
+      videoSource.isPlaying = false
+    }
     .fileImporter(isPresented: $isChoosingVideo, allowedContentTypes: [.movie]) { (result) in
       if let url = try? result.get() {
         videoSource.loadURL(url)
@@ -177,13 +185,40 @@ struct VideoPanel: View {
     }
   }
 
-  var videoControlPanel: some View {
+  var fullVideoControlPanel: some View {
     VStack(spacing: 8) {
       videoPlayer
       controlBar
       playbackBar
     }
   }
+
+  #if os(iOS)
+  @State var isShowingControls: Bool = true
+  var videoControlPanel: some View {
+    Group {
+      if isShowingControls {
+        fullVideoControlPanel
+      } else {
+        videoPlayer
+      }
+    }
+    .onReceive(NotificationCenter.default.publisher(for: UIApplication.keyboardWillShowNotification)) { _ in
+      withAnimation {
+        isShowingControls = false
+      }
+    }
+    .onReceive(NotificationCenter.default.publisher(for: UIApplication.keyboardDidHideNotification)) { _ in
+      withAnimation {
+        isShowingControls = true
+      }
+    }
+  }
+  #else
+  var videoControlPanel: some View {
+    fullVideoControlPanel
+  }
+  #endif
 
   var body: some View {
     VStack(spacing: 8) {
