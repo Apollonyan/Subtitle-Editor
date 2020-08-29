@@ -228,6 +228,9 @@ struct VideoPanel: View {
           .onChange(of: videoSource.currentTime) { newValue in
             appState.currentTime = newValue
           }
+          .onChange(of: appState.currentTime) { newValue in
+            videoSource.currentTime = newValue
+          }
       } else {
         #if os(iOS)
         HStack {
