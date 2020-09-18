@@ -14,14 +14,12 @@ import tidysub
 
 struct ContentView: View {
   @EnvironmentObject var state: SubtitleEditorState
-  @StateObject var videoSource = VideoSource()
-
 
   var videoPanel: some View {
     #if os(iOS)
-    return VideoPanel(videoSource: videoSource)
+    return VideoPanel()
     #else
-    return VideoPanel(videoSource: videoSource)
+    return VideoPanel()
       .padding()
     #endif
   }

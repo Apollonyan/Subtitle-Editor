@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		D217C37524EEC6150056EFDF /* VideoSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D217C37424EEC6150056EFDF /* VideoSource.swift */; };
-		D217C37624EEC6150056EFDF /* VideoSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D217C37424EEC6150056EFDF /* VideoSource.swift */; };
 		D217C37824EED1DA0056EFDF /* VideoPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D217C37724EED1DA0056EFDF /* VideoPanel.swift */; };
 		D217C37924EED1DA0056EFDF /* VideoPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D217C37724EED1DA0056EFDF /* VideoPanel.swift */; };
 		D217C37B24EED21E0056EFDF /* EditorPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D217C37A24EED21E0056EFDF /* EditorPanel.swift */; };
@@ -33,7 +31,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		D217C37424EEC6150056EFDF /* VideoSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoSource.swift; sourceTree = "<group>"; };
 		D217C37724EED1DA0056EFDF /* VideoPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPanel.swift; sourceTree = "<group>"; };
 		D217C37A24EED21E0056EFDF /* EditorPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorPanel.swift; sourceTree = "<group>"; };
 		D23C9DB524EE946700F9D3A4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -93,7 +90,6 @@
 				D23C9DD824EE94BA00F9D3A4 /* ContentView.swift */,
 				D217C37A24EED21E0056EFDF /* EditorPanel.swift */,
 				D217C37724EED1DA0056EFDF /* VideoPanel.swift */,
-				D217C37424EEC6150056EFDF /* VideoSource.swift */,
 				D23C9DD924EE94BA00F9D3A4 /* MutableSubtitle.swift */,
 				D23C9DD624EE94BA00F9D3A4 /* Utils.swift */,
 				D23C9DB524EE946700F9D3A4 /* Assets.xcassets */,
@@ -250,7 +246,6 @@
 				D258D8BF24F8E5EA00603A0D /* SubtitleEditorState.swift in Sources */,
 				D217C37824EED1DA0056EFDF /* VideoPanel.swift in Sources */,
 				D23C9DDB24EE94BA00F9D3A4 /* Utils.swift in Sources */,
-				D217C37524EEC6150056EFDF /* VideoSource.swift in Sources */,
 				D217C37B24EED21E0056EFDF /* EditorPanel.swift in Sources */,
 				D23C9DE124EE94BA00F9D3A4 /* MutableSubtitle.swift in Sources */,
 				D23C9DDF24EE94BA00F9D3A4 /* ContentView.swift in Sources */,
@@ -263,7 +258,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				D217C37924EED1DA0056EFDF /* VideoPanel.swift in Sources */,
-				D217C37624EEC6150056EFDF /* VideoSource.swift in Sources */,
 				D23C9DE424EE94BA00F9D3A4 /* SubtitleEditorApp.swift in Sources */,
 				D217C37C24EED21E0056EFDF /* EditorPanel.swift in Sources */,
 				D23C9DDC24EE94BA00F9D3A4 /* Utils.swift in Sources */,

@@ -11,7 +11,6 @@ import UniformTypeIdentifiers
 
 struct VideoPanel: View {
   @EnvironmentObject var appState: SubtitleEditorState
-  @ObservedObject var videoSource: VideoSource
 
   @State var isChoosingVideo: Bool = false
   var chooseVideoButton: some View {
@@ -59,18 +58,18 @@ struct VideoPanel: View {
   }
 
   var crossPlatformVideoPlayer: some View {
-    VideoPlayer(player: videoSource.avPlayer) {
+    VideoPlayer(player: appState.avPlayer) {
       subtitle
     }
     .aspectRatio(CGSize(width: 16, height: 9), contentMode: .fit)
     .onTapGesture {
       withAnimation {
-        videoSource.isPlaying.toggle()
+        appState.isPlaying.toggle()
       }
     }
     .fileImporter(isPresented: $isChoosingVideo, allowedContentTypes: [.movie]) { (result) in
       if let url = try? result.get() {
-        videoSource.loadURL(url)
+        appState.loadURL(url)
       }
     }
   }
@@ -85,7 +84,7 @@ struct VideoPanel: View {
       .sheet(isPresented: $isChoosingPhotosLibrary) {
         PhotosPicker(isPresented: $isChoosingPhotosLibrary) { url in
           DispatchQueue.main.async {
-            videoSource.loadURL(url)
+            appState.loadURL(url)
           }
         }
       }
@@ -105,15 +104,15 @@ struct VideoPanel: View {
         .accessibilityLabeledPair(role: .label, id: "curTime", in: vcpSpace)
       TextField("time/segment", text: $jumpTarget, onCommit: {
         guard let target = appState.timeInterval(for: jumpTarget) else { return }
-        videoSource.currentTime._seconds = min(max(target, 0), videoSource.duration)
-        jumpTarget = videoSource.currentTime.seconds.hms
+        appState.currentTime._seconds = min(max(target, 0), appState.duration)
+        jumpTarget = appState.currentTime.seconds.hms
       })
       .font(.system(.body, design: .monospaced))
       .textFieldStyle(PlainTextFieldStyle())
       .fixedSize()
       .accessibilityLabeledPair(role: .content, id: "curTime", in: vcpSpace)
       .onAppear {
-        jumpTarget = videoSource.currentTime.seconds.hms
+        jumpTarget = appState.currentTime.seconds.hms
       }
     }
     .matchedGeometryEffect(id: "curTime", in: vcpSpace,
@@ -123,8 +122,8 @@ struct VideoPanel: View {
   @Namespace var vcpSpace
   var controlBar: some View {
     HStack(spacing: 8) {
-      if videoSource.isPlaying {
-        Text(videoSource.currentTime.seconds.hms)
+      if appState.isPlaying {
+        Text(appState.currentTime.seconds.hms)
           .font(.system(.body, design: .monospaced))
           .lineLimit(1)
           .matchedGeometryEffect(id: "curTime", in: vcpSpace, isSource: false)
@@ -132,18 +131,18 @@ struct VideoPanel: View {
         jumpControl
       }
 
-      Text("\(videoSource.desiredPlaybackRate.hundredths)x")
+      Text("\(appState.desiredPlaybackRate.hundredths)x")
         .contextMenu {
           ForEach([0.5 as Float, 1, 1.5, 1.75, 2], id: \.self) { rate in
             Button("\(rate.hundredths)x") {
-              videoSource.desiredPlaybackRate = rate
+              appState.desiredPlaybackRate = rate
             }
           }
         }
 
-      Slider(value: $videoSource.currentTime._seconds, in: 0...videoSource.duration)
+      Slider(value: $appState.currentTime._seconds, in: 0...appState.duration)
 
-      Text(videoSource.duration.hms)
+      Text(appState.duration.hms)
         .font(.system(.body, design: .monospaced))
         .lineLimit(1)
         .layoutPriority(1)
@@ -153,20 +152,20 @@ struct VideoPanel: View {
   var playbackBar: some View {
     HStack(spacing: 32) {
       Button {
-        videoSource.currentTime._seconds = max(0, videoSource.currentTime.seconds - 15)
+        appState.currentTime._seconds = max(0, appState.currentTime.seconds - 15)
       } label: {
         Image(systemName: "gobackward.15")
           .font(.title)
       }
       .buttonStyle(BorderlessButtonStyle())
-      .disabled(videoSource.currentTime.seconds < 5)
+      .disabled(appState.currentTime.seconds < 5)
 
       Button {
         withAnimation {
-          videoSource.isPlaying.toggle()
+          appState.isPlaying.toggle()
         }
       } label: {
-        Image(systemName: videoSource.isPlaying
+        Image(systemName: appState.isPlaying
                 ? "pause.rectangle.fill"
                 : "play.rectangle.fill")
           .font(.largeTitle)
@@ -174,13 +173,13 @@ struct VideoPanel: View {
       .buttonStyle(BorderlessButtonStyle())
 
       Button {
-        videoSource.currentTime._seconds = min(videoSource.duration, videoSource.currentTime.seconds + 15)
+        appState.currentTime._seconds = min(appState.duration, appState.currentTime.seconds + 15)
       } label: {
         Image(systemName: "goforward.15")
           .font(.title)
       }
       .buttonStyle(BorderlessButtonStyle())
-      .disabled(videoSource.currentTime.seconds + 5 > videoSource.duration)
+      .disabled(appState.currentTime.seconds + 5 > appState.duration)
     }
   }
 
@@ -229,14 +228,8 @@ struct VideoPanel: View {
   var body: some View {
     VStack(spacing: 8) {
       Spacer()
-      if videoSource.avPlayer != nil {
+      if appState.avPlayer != nil {
         videoControlPanel
-          .onChange(of: videoSource.currentTime) { newValue in
-            appState.currentTime = newValue
-          }
-          .onChange(of: appState.currentTime) { newValue in
-            videoSource.currentTime = newValue
-          }
       } else {
         #if os(iOS)
         HStack {
@@ -245,7 +238,7 @@ struct VideoPanel: View {
             .sheet(isPresented: $isChoosingPhotosLibrary) {
               PhotosPicker(isPresented: $isChoosingPhotosLibrary) { url in
                 DispatchQueue.main.async {
-                  videoSource.loadURL(url)
+                  appState.loadURL(url)
                 }
               }
             }
@@ -257,7 +250,7 @@ struct VideoPanel: View {
           chooseVideoButton
             .fileImporter(isPresented: $isChoosingVideo, allowedContentTypes: [.movie]) { (result) in
               if let url = try? result.get() {
-                videoSource.loadURL(url)
+                appState.loadURL(url)
               }
             }
           Spacer()
@@ -269,7 +262,7 @@ struct VideoPanel: View {
       if let url = UserDefaults.standard
           .withSecurityScopedURL(forKey: "VIDEO_URL_BOOKMARK",
                                  autoScope: true, then: { $0 }) {
-        videoSource.loadURL(url)
+        appState.loadURL(url)
       }
     }
   }
@@ -277,6 +270,7 @@ struct VideoPanel: View {
 
 struct VideoPanel_Previews: PreviewProvider {
   static var previews: some View {
-    VideoPanel(videoSource: VideoSource())
+    VideoPanel()
+      .environmentObject(SubtitleEditorState())
   }
 }

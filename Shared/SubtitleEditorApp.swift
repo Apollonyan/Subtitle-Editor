@@ -10,10 +10,12 @@ import SwiftUI
 
 @main
 struct SubtitleEditorApp: App {
+  @StateObject var appState = SubtitleEditorState()
+
   var body: some Scene {
     DocumentGroup(viewing: MutableSubtitle.self) { config in
       ContentView()
-        .environmentObject(SubtitleEditorState(document: config))
+        .environmentObject(appState.withSubtitle(config))
     }
   }
 }
