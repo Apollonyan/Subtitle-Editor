@@ -49,11 +49,13 @@ struct ContentView: View {
       } else {
         HStack(spacing: 16) {
           videoPanel
+          Spacer()
           editorPanel
             .frame(idealWidth: min(max(500, geo.size.width * 0.3), geo.size.width * 0.5),
                    idealHeight: geo.size.height)
             .fixedSize()
         }
+        .padding()
       }
     }
   }

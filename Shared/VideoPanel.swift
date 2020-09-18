@@ -68,14 +68,6 @@ struct VideoPanel: View {
         videoSource.isPlaying.toggle()
       }
     }
-    .onAppear {
-      DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-        videoSource.isPlaying = true
-      }
-    }
-    .onDisappear {
-      videoSource.isPlaying = false
-    }
     .fileImporter(isPresented: $isChoosingVideo, allowedContentTypes: [.movie]) { (result) in
       if let url = try? result.get() {
         videoSource.loadURL(url)
@@ -106,33 +98,38 @@ struct VideoPanel: View {
   }
 
   @State private var jumpTarget: String = ""
+  var jumpControl: some View {
+    HStack {
+      Image(systemName: "signpost.right.fill")
+        .accessibilityLabel("Jump to")
+        .accessibilityLabeledPair(role: .label, id: "curTime", in: vcpSpace)
+      TextField("time/segment", text: $jumpTarget, onCommit: {
+        guard let target = appState.timeInterval(for: jumpTarget) else { return }
+        videoSource.currentTime._seconds = min(max(target, 0), videoSource.duration)
+        jumpTarget = videoSource.currentTime.seconds.hms
+      })
+      .font(.system(.body, design: .monospaced))
+      .textFieldStyle(PlainTextFieldStyle())
+      .fixedSize()
+      .accessibilityLabeledPair(role: .content, id: "curTime", in: vcpSpace)
+      .onAppear {
+        jumpTarget = videoSource.currentTime.seconds.hms
+      }
+    }
+    .matchedGeometryEffect(id: "curTime", in: vcpSpace,
+                           anchor: .leading)
+  }
+
   @Namespace var vcpSpace
   var controlBar: some View {
     HStack(spacing: 8) {
       if videoSource.isPlaying {
         Text(videoSource.currentTime.seconds.hms)
           .font(.system(.body, design: .monospaced))
+          .lineLimit(1)
           .matchedGeometryEffect(id: "curTime", in: vcpSpace, isSource: false)
       } else {
-        HStack {
-          Image(systemName: "signpost.right.fill")
-            .accessibilityLabel("Jump to")
-            .accessibilityLabeledPair(role: .label, id: "curTime", in: vcpSpace)
-          TextField("time/segment", text: $jumpTarget, onCommit: {
-            guard let target = appState.timeInterval(for: jumpTarget) else { return }
-            videoSource.currentTime._seconds = min(max(target, 0), videoSource.duration)
-            jumpTarget = videoSource.currentTime.seconds.hms
-          })
-          .font(.system(.body, design: .monospaced))
-          .textFieldStyle(PlainTextFieldStyle())
-          .fixedSize()
-          .accessibilityLabeledPair(role: .content, id: "curTime", in: vcpSpace)
-          .onAppear {
-            jumpTarget = videoSource.currentTime.seconds.hms
-          }
-        }
-        .matchedGeometryEffect(id: "curTime", in: vcpSpace,
-                               anchor: .leading, isSource: false)
+        jumpControl
       }
 
       Text("\(videoSource.desiredPlaybackRate.hundredths)x")
@@ -148,6 +145,8 @@ struct VideoPanel: View {
 
       Text(videoSource.duration.hms)
         .font(.system(.body, design: .monospaced))
+        .lineLimit(1)
+        .layoutPriority(1)
     }
   }
 
@@ -193,6 +192,7 @@ struct VideoPanel: View {
     }
   }
 
+  /*
   #if os(iOS)
   @State var isShowingControls: Bool = true
   var videoControlPanel: some View {
@@ -200,25 +200,31 @@ struct VideoPanel: View {
       if isShowingControls {
         fullVideoControlPanel
       } else {
-        videoPlayer
+        VStack(spacing: 8) {
+          videoPlayer
+          jumpControl
+        }
       }
     }
-    .onReceive(NotificationCenter.default.publisher(for: UIApplication.keyboardWillShowNotification)) { _ in
+    .onReceive(NotificationCenter.default
+                .publisher(for: UIApplication.keyboardWillShowNotification)) { _ in
       withAnimation {
         isShowingControls = false
       }
     }
-    .onReceive(NotificationCenter.default.publisher(for: UIApplication.keyboardDidHideNotification)) { _ in
+    .onReceive(NotificationCenter.default
+                .publisher(for: UIApplication.keyboardDidHideNotification)) { _ in
       withAnimation {
         isShowingControls = true
       }
     }
   }
   #else
+ */
   var videoControlPanel: some View {
     fullVideoControlPanel
   }
-  #endif
+//  #endif
 
   var body: some View {
     VStack(spacing: 8) {
