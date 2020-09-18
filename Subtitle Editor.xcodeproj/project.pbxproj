@@ -27,7 +27,6 @@
 		D23C9DEC24EE952F00F9D3A4 /* tidysub in Frameworks */ = {isa = PBXBuildFile; productRef = D23C9DEB24EE952F00F9D3A4 /* tidysub */; };
 		D23C9DF024EE953F00F9D3A4 /* srt in Frameworks */ = {isa = PBXBuildFile; productRef = D23C9DEF24EE953F00F9D3A4 /* srt */; };
 		D23C9DF224EE953F00F9D3A4 /* tidysub in Frameworks */ = {isa = PBXBuildFile; productRef = D23C9DF124EE953F00F9D3A4 /* tidysub */; };
-		D23C9DFB24EE9A8100F9D3A4 /* fileImporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D23C9DFA24EE9A8100F9D3A4 /* fileImporter.swift */; };
 		D258D8BF24F8E5EA00603A0D /* SubtitleEditorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D258D8BE24F8E5EA00603A0D /* SubtitleEditorState.swift */; };
 		D258D8C024F8E5EA00603A0D /* SubtitleEditorState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D258D8BE24F8E5EA00603A0D /* SubtitleEditorState.swift */; };
 		D2FF167524F983260065A139 /* PhotosPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2FF167424F983260065A139 /* PhotosPicker.swift */; };
@@ -47,7 +46,6 @@
 		D23C9DD824EE94BA00F9D3A4 /* ContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		D23C9DD924EE94BA00F9D3A4 /* MutableSubtitle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MutableSubtitle.swift; sourceTree = "<group>"; };
 		D23C9DDA24EE94BA00F9D3A4 /* SubtitleEditorApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubtitleEditorApp.swift; sourceTree = "<group>"; };
-		D23C9DFA24EE9A8100F9D3A4 /* fileImporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = fileImporter.swift; sourceTree = "<group>"; };
 		D258D8BE24F8E5EA00603A0D /* SubtitleEditorState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubtitleEditorState.swift; sourceTree = "<group>"; };
 		D2FF167424F983260065A139 /* PhotosPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosPicker.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -126,7 +124,6 @@
 			children = (
 				D23C9DC424EE946700F9D3A4 /* Info.plist */,
 				D23C9DC524EE946700F9D3A4 /* macOS.entitlements */,
-				D23C9DFA24EE9A8100F9D3A4 /* fileImporter.swift */,
 			);
 			path = macOS;
 			sourceTree = "<group>";
@@ -190,7 +187,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1200;
-				LastUpgradeCheck = 1200;
+				LastUpgradeCheck = 1220;
 				TargetAttributes = {
 					D23C9DB924EE946700F9D3A4 = {
 						CreatedOnToolsVersion = 12.0;
@@ -269,7 +266,6 @@
 				D217C37624EEC6150056EFDF /* VideoSource.swift in Sources */,
 				D23C9DE424EE94BA00F9D3A4 /* SubtitleEditorApp.swift in Sources */,
 				D217C37C24EED21E0056EFDF /* EditorPanel.swift in Sources */,
-				D23C9DFB24EE9A8100F9D3A4 /* fileImporter.swift in Sources */,
 				D23C9DDC24EE94BA00F9D3A4 /* Utils.swift in Sources */,
 				D23C9DE224EE94BA00F9D3A4 /* MutableSubtitle.swift in Sources */,
 				D23C9DE024EE94BA00F9D3A4 /* ContentView.swift in Sources */,
@@ -444,6 +440,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				ENABLE_PREVIEWS = YES;
@@ -468,6 +465,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				ENABLE_PREVIEWS = YES;
