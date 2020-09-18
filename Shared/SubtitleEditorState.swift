@@ -49,7 +49,17 @@ class SubtitleEditorState: ObservableObject {
     currentIndex.map { subtitles.mutableSegments[$0] }
   }
   var subtitles: MutableSubtitle { config.document }
-  var _subtitles: Binding<MutableSubtitle> { config.$document }
+  var _subtitles: Binding<MutableSubtitle> {
+    return Binding(
+      get: {
+        self.config.document
+      },
+      set: { newValue in
+        self.config.document = newValue
+        self.objectWillChange.send()
+      }
+    )
+  }
 
   private var config: FileDocumentConfiguration<MutableSubtitle>!
 
