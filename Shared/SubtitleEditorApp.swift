@@ -40,12 +40,3 @@ extension MutableSubtitle: FileDocument {
     return try FileWrapper(regularFileWithContents: asData())
   }
 }
-
-
-//
-//let save = UIMenu(
-//  title: "Save", identifier: .init(rawValue: "Save"),
-//  options: .displayInline,
-//  children: [
-//    UIKeyCommand(title: "Save", image: nil, action: #selector(postSave), input: "S", modifierFlags: .command)
-//])
